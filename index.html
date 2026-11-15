@@ -287,6 +287,150 @@ document.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{try{cargarTodo
             .sb .hidden{ display:none !important; }
         }
         @media print{ .sb{ display:none !important; } body.con-sidebar{ padding-left:0 !important; } }
+        /* =====================  ESTILO "CACAO ELEGANTE"  ===================== */
+        :root{
+            --sm-fondo:#F7F2EA; --sm-carta:#FFFFFF; --sm-borde:#EADFCF; --sm-cafe:#2B1A12; --sm-cafe2:#5C3A21;
+            --sm-oro:#D4AF37; --sm-oro-suave:#F6EBC8; --sm-verde:#1B5E20; --sm-rojo:#B42318; --sm-naranja:#B54708;
+            --sm-gris:#7A6A5C; --sm-sombra:0 1px 2px rgba(43,26,18,.06), 0 4px 14px rgba(43,26,18,.05);
+        }
+        body{ background:var(--sm-fondo) !important; color:var(--sm-cafe); -webkit-font-smoothing:antialiased; }
+        main{ font-feature-settings:"tnum" 1; }
+        main h1{ color:var(--sm-cafe) !important; letter-spacing:-.01em; }
+        main h2:not([class*="text-"]){ color:var(--sm-cafe); }
+        #smcacaoDecisionV41 h2, #smcacaoDecisionV41 h3{ color:#F6EBC8 !important; }
+        @media (max-width:640px){ .dash-capital input{ font-size:22px; } .dash-hero-num{ font-size:36px; } .dash-titulo{ font-size:24px; } }
+        /* tarjetas: borde suave y sombra liviana en vez de sombra gris */
+        main .bg-white.rounded-lg, main .bg-white.rounded-xl, main .bg-white.rounded{ border:1px solid var(--sm-borde); box-shadow:var(--sm-sombra) !important; border-radius:14px; }
+        main .bg-gray-50{ background:#FBF8F3 !important; }
+        main input:not([type=checkbox]):not([type=radio]), main select, main textarea{ border-color:#DCCDB8 !important; border-radius:10px !important; background:#fff; }
+        main input:focus, main select:focus, main textarea:focus{ outline:2px solid var(--sm-oro) !important; outline-offset:0; border-color:var(--sm-oro) !important; }
+        /* colores sueltos (azul, morado, turquesa, índigo) pasan a la paleta café/oro */
+        main .text-blue-600, main .text-blue-700, main .text-indigo-700, main .text-purple-700, main .text-teal-600, main .text-teal-700, main .text-teal-800{ color:var(--sm-cafe2) !important; }
+        main .border-blue-500, main .border-blue-600, main .border-indigo-600, main .border-purple-600, main .border-teal-500, main .border-yellow-500{ border-color:var(--sm-oro) !important; }
+        main .bg-blue-600, main .bg-indigo-600, main .bg-purple-600, main .bg-teal-600, main .bg-teal-700, main .bg-amber-700, main .bg-orange-600{ background:var(--sm-cafe) !important; }
+        main .bg-blue-600:hover, main .bg-teal-700:hover, main .bg-amber-700:hover, main .bg-orange-600:hover{ background:#000 !important; }
+        main .bg-green-dark, main .bg-green-700{ background:var(--sm-verde) !important; }
+        main table thead tr, main table thead th{ background:#F3ECE1 !important; color:var(--sm-cafe2) !important; }
+        main table tbody tr:hover{ background:#FBF6EC; }
+        main button.rounded, main button.rounded-md, main button.rounded-lg{ border-radius:10px !important; }
+        .top-nav{ background:var(--sm-cafe) !important; }
+
+
+        /* ===== Cierre de caja tipo recibo ===== */
+        .rc-sub{ margin:22px 0 8px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--sm-gris); }
+        .rc-grupo{ border:1px dashed #D8C7AE; border-radius:12px; padding:6px 14px; margin-bottom:10px; background:#FFFDF9; }
+        .rc-grupo-t{ margin:6px 0 2px; font-size:11.5px; font-weight:800; color:var(--sm-cafe2); text-transform:uppercase; letter-spacing:.06em; }
+        .rc-fila{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px dotted #E6D9C6; font-size:15px; color:var(--sm-cafe); gap:10px; }
+        .rc-fila:last-child{ border-bottom:0; }
+        .rc-fila b{ font-size:16px; white-space:nowrap; }
+        .rc-mas{ color:var(--sm-verde) !important; } .rc-mas::before{ content:"+ "; }
+        .rc-menos{ color:var(--sm-rojo) !important; } .rc-menos::before{ content:"− "; }
+        .rc-neto{ display:flex; justify-content:space-between; align-items:center; gap:10px; background:linear-gradient(140deg,#2B1A12,#4A2E1F); color:#F3E9DC; border-radius:14px; padding:16px 18px; margin-top:14px; }
+        .rc-neto span{ font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:13px; }
+        .rc-neto b{ font-size:30px; color:var(--sm-oro); white-space:nowrap; }
+        .rc-dia{ background:#FBF8F3; border:1px solid var(--sm-borde); border-radius:14px; padding:14px; }
+        .rc-dia-top{ display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--sm-gris); font-weight:700; margin-bottom:10px; }
+        .rc-dia-top b{ color:var(--sm-cafe); text-transform:capitalize; }
+        .rc-dia-tot{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+        .rc-dia-tot > div{ background:#fff; border-radius:10px; padding:10px; border:1px solid var(--sm-borde); }
+        .rc-dia-tot p{ margin:0; font-size:11.5px; color:var(--sm-gris); }
+        .rc-dia-tot b{ font-size:17px; color:var(--sm-cafe); white-space:nowrap; }
+        .rc-dia-tot .rc-mas::before, .rc-dia-tot .rc-menos::before{ content:""; }
+        .rc-lista{ margin-top:10px; max-height:320px; overflow:auto; }
+        .rc-mov{ display:flex; justify-content:space-between; gap:10px; padding:8px 2px; border-bottom:1px dotted #E6D9C6; font-size:13.5px; }
+        .rc-mov small{ display:block; color:var(--sm-gris); font-size:11.5px; }
+        .rc-mov b{ white-space:nowrap; }
+        .rc-vacio{ margin:6px 0 0; font-size:13px; color:var(--sm-gris); }
+        @media print{ .rc-neto{ background:#fff !important; color:#000 !important; border:2px solid #000; } .rc-neto b{ color:#000 !important; } .rc-lista{ max-height:none; } }
+
+        /* ===== Reportes ===== */
+        .rep-tabla{ width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; min-width:520px; }
+        .rep-tabla th{ text-align:right; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--sm-gris); padding:8px 8px; border-bottom:1px solid var(--sm-borde); background:transparent !important; }
+        .rep-tabla td{ text-align:right; padding:9px 8px; border-bottom:1px dotted #E6D9C6; white-space:nowrap; color:var(--sm-cafe); }
+        .rep-tabla th:first-child, .rep-tabla td:first-child{ text-align:left; text-transform:capitalize; }
+        .rep-tabla td b{ font-weight:800; }
+        .rep-barras{ display:flex; gap:10px; align-items:flex-end; height:130px; padding:6px 2px 0; border-bottom:1px solid var(--sm-borde); position:relative; }
+        .rep-bar{ flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; gap:4px; min-width:0; }
+        .rep-bar i{ display:block; width:100%; max-width:54px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#2E7D32,#1B5E20); min-height:2px; }
+        .rep-bar.neg i{ background:linear-gradient(180deg,#D9534F,#B42318); }
+        .rep-bar em{ font-style:normal; font-size:11px; font-weight:700; color:var(--sm-cafe2); white-space:nowrap; }
+        .rep-bar small{ font-size:11px; color:var(--sm-gris); text-transform:capitalize; padding-bottom:4px; }
+        .rep-lista{ display:flex; flex-direction:column; gap:8px; }
+        .rep-sec{ display:grid; grid-template-columns:1fr auto; gap:2px 10px; background:#FBF8F3; border-radius:12px; padding:10px 12px; }
+        .rep-sec span{ font-size:13px; color:var(--sm-cafe); }
+        .rep-sec small{ font-size:11.5px; color:var(--sm-gris); }
+        .rep-sec b{ grid-row:span 2; align-self:center; font-size:20px; color:var(--sm-cafe); }
+        .rep-sec b.bajo{ color:var(--sm-rojo); } .rep-sec b.alto{ color:var(--sm-verde); }
+        .rep-cmp{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:12px; }
+        .rep-cmp > div{ background:#FBF8F3; border-radius:12px; padding:12px; }
+        .rep-cmp p{ margin:0; font-size:12px; color:var(--sm-gris); }
+        .rep-cmp b{ font-size:21px; color:var(--sm-cafe); }
+        .rep-cmp .rep-big{ grid-column:1 / -1; background:#EAF4EA; }
+        .rep-cmp .rep-big.neg{ background:#FDECEA; }
+        .rep-cmp .rep-big b{ font-size:26px; color:var(--sm-verde); }
+        .rep-cmp .rep-big.neg b{ color:var(--sm-rojo); }
+        /* ===== Inicio ===== */
+        .dash-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+        .dash-saludo{ color:var(--sm-gris); font-size:14px; margin:0; }
+        .dash-titulo{ font-size:28px; font-weight:800; margin:2px 0 2px; }
+        .dash-periodo{ color:var(--sm-gris); font-size:13px; margin:0; }
+        .dash-btn-sec{ border:1px solid var(--sm-cafe2); color:var(--sm-cafe2); background:#fff; border-radius:10px; padding:8px 12px; font-size:13px; font-weight:700; }
+        .dash-grid-2{ display:grid; grid-template-columns:minmax(0,1fr); gap:14px; margin-bottom:14px; }
+        @media (min-width:900px){ .dash-grid-2{ grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); } }
+        .dash-mb{ margin-bottom:14px; }
+        .dash-card{ background:var(--sm-carta); border:1px solid var(--sm-borde); border-radius:16px; padding:18px; box-shadow:var(--sm-sombra); }
+        .dash-card-top{ display:flex; align-items:center; gap:8px; color:var(--sm-gris); font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px; }
+        .dash-ico{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+        .dash-chip{ margin-left:auto; background:var(--sm-oro-suave); color:var(--sm-cafe); border-radius:999px; padding:3px 10px; font-size:12px; text-transform:none; letter-spacing:0; }
+        .dash-hero{ background:linear-gradient(140deg,#2B1A12 0%,#4A2E1F 100%); color:#F3E9DC; border-radius:18px; padding:20px; box-shadow:0 10px 28px rgba(43,26,18,.22); position:relative; overflow:hidden; }
+        .dash-hero::after{ content:""; position:absolute; right:-40px; top:-40px; width:170px; height:170px; border-radius:50%; background:radial-gradient(circle, rgba(212,175,55,.28), transparent 70%); }
+        .dash-hero-top{ display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#D9C7AE; }
+        .dash-hero-num{ font-size:42px; font-weight:800; color:var(--sm-oro); margin:8px 0 2px; line-height:1.05; }
+        .dash-hero-num.text-red-600{ color:#FF8A80 !important; }
+        .dash-hero-sub{ font-size:13px; color:#CDBBA3; margin:0; }
+        .dash-hero-btn{ margin-top:14px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); color:#fff; border-radius:10px; padding:8px 12px; font-size:13px; font-weight:600; position:relative; z-index:1; }
+        .dash-hero-btn:hover{ background:rgba(255,255,255,.18); }
+        .dash-capital{ display:flex; align-items:center; gap:8px; }
+        .dash-capital span{ font-size:26px; font-weight:800; color:var(--sm-cafe2); }
+        .dash-capital input{ flex:1; min-width:0; font-size:26px; font-weight:800; color:var(--sm-cafe); border:1px solid #DCCDB8; border-radius:10px; padding:6px 10px; background:#FBF8F3; }
+        .dash-capital button{ background:var(--sm-cafe); color:#fff; font-weight:700; border-radius:10px; padding:11px 14px; font-size:14px; }
+        .dash-nota{ font-size:12px; color:var(--sm-gris); margin:8px 0 0; }
+        .dash-inv{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+        @media (min-width:900px){ .dash-inv{ grid-template-columns:repeat(4,1fr); } }
+        .dash-inv-item{ display:flex; gap:10px; align-items:flex-start; background:#FBF8F3; border-radius:12px; padding:12px; }
+        .dash-inv-item p{ margin:0; font-size:12.5px; color:var(--sm-gris); }
+        .dash-inv-item b{ font-size:20px; color:var(--sm-cafe); }
+        .dash-dot{ width:10px; height:10px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+        .dash-semana{ margin-top:14px; }
+        .dash-semana-t{ display:flex; justify-content:space-between; font-size:12px; color:var(--sm-gris); margin-bottom:6px; }
+        .dash-semana-t span:last-child{ font-weight:700; color:var(--sm-cafe); }
+        .dash-barras{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; align-items:end; height:92px; }
+        .dash-barra{ display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:4px; }
+        .dash-barra i{ display:block; width:100%; max-width:46px; border-radius:6px 6px 2px 2px; background:linear-gradient(180deg,#D4AF37,#B8912A); min-height:3px; }
+        .dash-barra.vacia i{ background:#EADFCF; }
+        .dash-barra.hoy i{ background:linear-gradient(180deg,#5C3A21,#2B1A12); }
+        .dash-barra small{ font-size:10.5px; color:var(--sm-gris); }
+        .dash-barra em{ font-style:normal; font-size:10.5px; color:var(--sm-cafe2); font-weight:700; }
+        .dash-ciclo{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+        @media (min-width:900px){ .dash-ciclo{ grid-template-columns:repeat(5,1fr); } }
+        .dash-ciclo > div{ background:#FBF8F3; border-radius:12px; padding:12px; }
+        .dash-ciclo p{ margin:0; font-size:12.5px; color:var(--sm-gris); }
+        .dash-ciclo b{ display:block; font-size:20px; color:var(--sm-cafe); }
+        .dash-ciclo small{ font-size:11px; color:var(--sm-gris); }
+        .dash-ciclo .dash-ciclo-neta{ background:#EAF4EA; grid-column:1 / -1; }
+        @media (min-width:900px){ .dash-ciclo .dash-ciclo-neta{ grid-column:auto; } }
+        .dash-ciclo-neta b{ color:var(--sm-verde); font-size:24px; }
+        .dash-rojo{ color:var(--sm-rojo) !important; }
+        .dash-naranja{ color:var(--sm-naranja) !important; }
+        .dash-acciones{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+        @media (min-width:900px){ .dash-acciones{ grid-template-columns:repeat(6,1fr); } }
+        .dash-acc{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:#fff; border:1px solid var(--sm-borde); border-radius:14px; padding:14px 6px; color:var(--sm-cafe); font-weight:700; font-size:13px; box-shadow:var(--sm-sombra); transition:transform .12s ease, box-shadow .12s ease; }
+        .dash-acc:hover{ transform:translateY(-1px); box-shadow:0 6px 18px rgba(43,26,18,.1); }
+        .dash-acc svg{ width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+        .dash-acc-main{ background:var(--sm-cafe); color:#fff; border-color:var(--sm-cafe); }
+        .dash-acc-main svg{ color:var(--sm-oro); }
+        .dash-mini b{ font-size:24px; color:var(--sm-cafe); }
+
     </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -314,6 +458,7 @@ const PERMISOS_MODULOS = {
   cxp: ['administrador','cajero','comprador'],
   cierre_caja: ['administrador','cajero'],
   control_pro: ['administrador'],
+  reportes: ['administrador'],
   terceros: ['administrador','cajero','vendedor','comprador'],
   cotizador: ['administrador','comprador'],
   trabajadores: ['administrador','cajero'],
@@ -326,7 +471,7 @@ function tienePermiso(modulo){
 
 function aplicarPermisosUI(){
   const rol = (typeof rolUsuario === 'string' && rolUsuario) ? rolUsuario : '';
-  const todosLosModulos = ['dashboard','compras','secado','ventas','inventario','gastos','cxc','cxp','cierre_caja','control_pro','terceros','cotizador','trabajadores','notas_campo'];
+  const todosLosModulos = ['dashboard','compras','secado','ventas','inventario','gastos','cxc','cxp','cierre_caja','control_pro','terceros','cotizador','trabajadores','notas_campo','reportes'];
 
   todosLosModulos.forEach(modulo => {
     const permitido = rol ? tienePermiso(modulo) : false;
@@ -861,7 +1006,7 @@ async function manejarSubmitLoginGate(event){
     <aside id="sidebarDesk" class="sb no-print" aria-label="Menú principal">
       <div class="sb-head">
         <div class="sb-logo"><img data-logo="1" alt="SM CACAO"></div>
-        <div class="sb-brand"><b>SM CACAO</b><span>Compra · Venta · v59</span></div>
+        <div class="sb-brand"><b>SM CACAO</b><span>Compra · Venta · v60</span></div>
       </div>
 
       <nav class="sb-scroll">
@@ -882,6 +1027,7 @@ async function manejarSubmitLoginGate(event){
         <button class="sb-item" data-sec="cxp" onclick="showSection('cxp')" title="Por pagar"><svg><use href="#i-out"/></svg><span>Por Pagar</span></button>
 
         <div class="sb-label">Gestión</div>
+        <button class="sb-item" data-sec="reportes" onclick="showSection('reportes')" title="Reportes"><svg><use href="#i-chart"/></svg><span>Reportes</span></button>
         <button class="sb-item" data-sec="terceros" onclick="showSection('terceros')" title="Clientes y proveedores"><svg><use href="#i-users"/></svg><span>Clientes / Proveedores</span></button>
         <button class="sb-item" data-sec="trabajadores" onclick="showSection('trabajadores')" title="Trabajadores"><svg><use href="#i-worker"/></svg><span>Trabajadores</span></button>
         <button class="sb-item" data-sec="control_pro" onclick="showSection('control_pro')" title="Control Pro"><svg><use href="#i-chart"/></svg><span>Control Pro</span></button>
@@ -948,6 +1094,7 @@ async function manejarSubmitLoginGate(event){
             <button onclick="showSection('cxc')" class="mm-btn"><span>📥</span><span>Por Cobrar</span></button>
             <button onclick="showSection('cxp')" class="mm-btn"><span>📤</span><span>Por Pagar</span></button>
             <button onclick="showCashClosing()" class="mm-btn"><span>🔒</span><span>Cierre de Caja</span></button>
+            <button onclick="showSection('reportes')" class="mm-btn"><span>📈</span><span>Reportes</span></button>
             <button onclick="showSection('control_pro')" class="mm-btn"><span>📊</span><span>Control Pro</span></button>
             <button onclick="showSection('terceros')" class="mm-btn"><span>👥</span><span>Clientes/Proveedores</span></button>
             <button onclick="showSection('cotizador')" class="mm-btn"><span>💹</span><span>Precio Cacao</span></button>
@@ -1028,14 +1175,17 @@ async function manejarSubmitLoginGate(event){
 
         <!-- ================= DASHBOARD SECTION ================= -->
         <section id="dashboard" class="block smcacao-section-visible">
-            <h1 class="text-3xl font-bold text-cacao-dark mb-6">Resumen del Negocio</h1>
+            <div class="dash-head">
+                <div>
+                    <p class="dash-saludo" id="dash_saludo">Buenos días</p>
+                    <h1 class="dash-titulo">Resumen del negocio</h1>
+                    <p id="dash_periodo" class="dash-periodo"></p>
+                </div>
+                <button id="btn_nuevo_periodo" onclick="abrirModalPeriodo()" style="display:none;" class="dash-btn-sec">🔄 Empezar período nuevo</button>
+            </div>
             <div id="avisoRespaldo" style="display:none;background:#FEF3C7;border:1px solid #FCD34D;border-radius:10px;padding:10px 14px;margin:-10px 0 18px;font-size:13px;color:#92400E;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
                 <span id="avisoRespaldoTexto"></span>
                 <button onclick="prepararRespaldoCompleto()" style="background:#92400E;color:#fff;font-weight:700;padding:6px 12px;border-radius:8px;font-size:12px;">💾 Hacer respaldo</button>
-            </div>
-            <div class="flex flex-wrap items-center justify-between gap-2 -mt-3 mb-5">
-                <p id="dash_periodo" class="text-sm text-gray-500"></p>
-                <button id="btn_nuevo_periodo" onclick="abrirModalPeriodo()" style="display:none;" class="text-xs font-bold border border-cacao-dark text-cacao-dark rounded px-3 py-1">🔄 Empezar período nuevo</button>
             </div>
             <div id="avisoNotasCampo" style="display:none;background:#FFF7E6;border:1px solid #F5D08A;border-radius:10px;padding:10px 14px;margin:-8px 0 18px;font-size:13px;color:#7A4B00;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
                 <span id="avisoNotasCampoTexto"></span>
@@ -1045,90 +1195,68 @@ async function manejarSubmitLoginGate(event){
                 <span id="avisoAsistenciaTexto"></span>
                 <button onclick="showSection('trabajadores')" style="background:#1E3A8A;color:#fff;font-weight:700;padding:6px 12px;border-radius:8px;font-size:12px;">👷 Marcar ahora</button>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-teal-500 md:col-span-2 lg:col-span-4 bg-teal-50">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                        <div>
-                            <p class="text-sm text-teal-800 font-bold uppercase">Efectivo en Caja (Liquidez Real)</p>
-                            <p class="text-4xl font-bold text-teal-600" id="dash_caja">$ 0.00</p>
-                            <p class="text-xs text-teal-700 mt-1">Efectivo disponible para operaciones diarias</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg border border-teal-200 shadow-sm">
-                            <p class="text-sm text-cacao-dark font-bold uppercase mb-1">💡 Capital Disponible para Invertir</p>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-2xl font-bold text-cacao">$</span>
-                                <input type="number" step="0.01" id="input_capital_manual" value="0.00" onchange="guardarCapitalManual()" class="w-full text-2xl font-bold text-cacao bg-gray-50 border border-gray-300 rounded p-1">
-                                <button type="button" id="btn_guardar_capital" onclick="guardarCapitalManual()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-3 py-2 rounded text-sm">Guardar</button>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Se calcula solo: sube con lo que cobras y baja con compras, gastos y pagos. Para agregar o quitar capital, escribe el nuevo total y toca "Guardar".</p>
-                        </div>
+            <!-- Plata -->
+            <div class="dash-grid-2">
+                <div class="dash-hero">
+                    <div class="dash-hero-top"><svg class="dash-ico"><use href="#i-register"/></svg><span>En caja ahora</span></div>
+                    <p class="dash-hero-num" id="dash_caja">$ 0.00</p>
+                    <p class="dash-hero-sub">Efectivo para comprar hoy</p>
+                    <button onclick="showCashClosing()" class="dash-hero-btn">Ver cierre de caja →</button>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-top"><svg class="dash-ico"><use href="#i-chart"/></svg><span>Capital del negocio</span></div>
+                    <div class="dash-capital">
+                        <span>$</span>
+                        <input type="number" step="0.01" id="input_capital_manual" value="0.00" onchange="guardarCapitalManual()">
+                        <button type="button" id="btn_guardar_capital" onclick="guardarCapitalManual()">Guardar</button>
                     </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-cacao">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Cacao Disponible (Libras)</p>
-                    <p class="text-2xl font-bold text-gray-800" id="dash_cacao">0.00 lbs</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-gold">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Dinero Invertido (Compras)</p>
-                    <p class="text-2xl font-bold text-gray-800" id="dash_invertido">$ 0.00</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Total Ventas (Ingresos)</p>
-                    <p class="text-2xl font-bold text-gray-800" id="dash_ventas">$ 0.00</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-red-500">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Total Gastos Operativos</p>
-                    <p class="text-2xl font-bold text-gray-800 text-red-600" id="dash_gastos">$ 0.00</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Ganancia Bruta</p>
-                    <p class="text-2xl font-bold text-gray-800" id="dash_bruta">$ 0.00</p>
-                    <p class="text-xs text-gray-400">Ventas - Costo Cacao</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-dark bg-green-50">
-                    <p class="text-sm text-gray-600 font-bold uppercase">GANANCIA NETA REAL</p>
-                    <p class="text-3xl font-bold text-green-dark" id="dash_neta">$ 0.00</p>
-                    <p class="text-xs text-gray-500">Ganancia Bruta - Gastos</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-600">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Por Cobrar (CxC)</p>
-                    <p class="text-2xl font-bold text-blue-600" id="dash_cxc">$ 0.00</p>
-                    <p class="text-xs text-gray-400">Créditos pendientes de clientes</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-orange-500">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Por Pagar (CxP)</p>
-                    <p class="text-2xl font-bold text-orange-600" id="dash_cxp">$ 0.00</p>
-                    <p class="text-xs text-gray-400">Deudas pendientes a proveedores</p>
+                    <p class="dash-nota">Sube con lo que cobras y baja con compras, gastos y pagos. Para poner o sacar plata, escribe el nuevo total y toca Guardar.</p>
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-3">
-                <button onclick="showSection('compras')" class="bg-cacao hover:bg-cacao-dark text-white font-bold py-3 px-5 rounded shadow">+ Compra</button>
-                <button onclick="showSection('secado')" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 px-5 rounded shadow">Proceso Secado</button>
-                <button onclick="showSection('ventas')" class="bg-green-dark hover:bg-green-800 text-white font-bold py-3 px-5 rounded shadow">+ Venta</button>
-                <button onclick="showSection('gastos')" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded shadow">+ Gasto</button>
-                <button onclick="showSection('cxc')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-5 rounded shadow">+ Por Cobrar</button>
-                <button onclick="showSection('cxp')" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-5 rounded shadow">+ Por Pagar</button>
-                <button onclick="showCashClosing()" class="bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 px-5 rounded shadow">Cierre de Caja</button>
+            <!-- Inventario -->
+            <div class="dash-card dash-mb">
+                <div class="dash-card-top"><svg class="dash-ico"><use href="#i-box"/></svg><span>Inventario</span>
+                    <span class="dash-chip" title="Total de todos los tipos"><b id="dash_cacao">0.00 lbs</b></span></div>
+                <div class="dash-inv">
+                    <div class="dash-inv-item"><span class="dash-dot" style="background:#C9A36A"></span><div><p>Baba</p><b id="dash_inv_baba">0 lb</b></div></div>
+                    <div class="dash-inv-item"><span class="dash-dot" style="background:#8B5A2B"></span><div><p>Semiseco</p><b id="dash_inv_semi">0 lb</b></div></div>
+                    <div class="dash-inv-item"><span class="dash-dot" style="background:#3E2723"></span><div><p>Seco</p><b id="dash_inv_seco">0 lb</b></div></div>
+                    <div class="dash-inv-item"><div><p>Valor (lo que costó)</p><b id="dash_valor_inventario">$ 0.00</b></div></div>
+                </div>
+                <div class="dash-semana">
+                    <div class="dash-semana-t"><span>Baba comprada · últimos 7 días</span><span id="dash_semana_total"></span></div>
+                    <div class="dash-barras" id="dash_semana"></div>
+                </div>
+                <p class="dash-nota" id="dash_alertas_txt"><span id="dash_alertas_stock" style="display:none">0</span></p>
             </div>
-            <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-5">
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-purple-600">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Valor del Inventario</p>
-                    <p class="text-3xl font-bold text-purple-700" id="dash_valor_inventario">$ 0.00</p>
-                    <p class="text-xs text-gray-500 mt-1">Costo acumulado del cacao disponible</p>
+
+            <!-- Ciclo -->
+            <div class="dash-card dash-mb">
+                <div class="dash-card-top"><svg class="dash-ico"><use href="#i-price"/></svg><span>Este ciclo</span></div>
+                <div class="dash-ciclo">
+                    <div><p>Ventas</p><b id="dash_ventas">$ 0.00</b></div>
+                    <div><p>Compras</p><b id="dash_invertido">$ 0.00</b></div>
+                    <div><p>Gastos</p><b id="dash_gastos" class="dash-rojo">$ 0.00</b></div>
+                    <div><p>Ganancia bruta</p><b id="dash_bruta">$ 0.00</b><small>Ventas − costo del cacao</small></div>
+                    <div class="dash-ciclo-neta"><p>Ganancia neta</p><b id="dash_neta">$ 0.00</b><small>Margen bruto <span id="dash_margen">0.0%</span></small></div>
                 </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Alertas de Stock</p>
-                    <p class="text-3xl font-bold text-yellow-600" id="dash_alertas_stock">0</p>
-                    <p class="text-xs text-gray-500 mt-1">Productos por debajo del mínimo</p>
-                </div>
-                <div class="bg-white rounded-lg shadow p-5 border-l-4 border-indigo-600">
-                    <p class="text-sm text-gray-500 font-bold uppercase">Margen Bruto</p>
-                    <p class="text-3xl font-bold text-indigo-700" id="dash_margen">0.0%</p>
-                    <p class="text-xs text-gray-500 mt-1">Rentabilidad de las ventas</p>
-                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="dash-acciones">
+                <button onclick="showSection('compras')" class="dash-acc dash-acc-main"><svg><use href="#i-cart"/></svg><span>Compra</span></button>
+                <button onclick="showSection('ventas')" class="dash-acc dash-acc-main"><svg><use href="#i-sale"/></svg><span>Venta</span></button>
+                <button onclick="showSection('secado')" class="dash-acc"><svg><use href="#i-sun"/></svg><span>Secado</span></button>
+                <button onclick="showSection('gastos')" class="dash-acc"><svg><use href="#i-receipt"/></svg><span>Gasto</span></button>
+                <button onclick="showCashClosing()" class="dash-acc"><svg><use href="#i-register"/></svg><span>Cierre de caja</span></button>
+                <button onclick="showSection('notas_campo')" class="dash-acc"><svg><use href="#i-notes"/></svg><span>Notas de campo</span></button>
+            </div>
+
+            <!-- Cuentas -->
+            <div class="dash-grid-2 dash-mb">
+                <div class="dash-card dash-mini" onclick="showSection('cxc')" style="cursor:pointer"><div class="dash-card-top"><svg class="dash-ico"><use href="#i-in"/></svg><span>Me deben (por cobrar)</span></div><b id="dash_cxc">$ 0.00</b></div>
+                <div class="dash-card dash-mini" onclick="showSection('cxp')" style="cursor:pointer"><div class="dash-card-top"><svg class="dash-ico"><use href="#i-out"/></svg><span>Debo (por pagar)</span></div><b id="dash_cxp" class="dash-naranja">$ 0.00</b></div>
             </div>
             <div class="mt-6 bg-gradient-to-r from-cacao-dark to-cacao rounded-xl shadow-lg p-5 text-white" id="smcacaoDecisionV41">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
@@ -1179,7 +1307,7 @@ async function manejarSubmitLoginGate(event){
 
         <!-- ================= CIERRE DE CAJA SECTION ================= -->
         <section id="cierre_caja" class="hidden smcacao-section-hidden">
-            <h1 class="text-3xl font-bold text-teal-800 mb-6 no-print">Corte y Cierre de Caja Diario</h1>
+            <h1 class="text-3xl font-bold mb-6 no-print">Cierre de caja</h1>
             
             <div class="bg-white shadow rounded-lg p-6 max-w-3xl mb-8 print-container">
                 <div class="text-center mb-6 pb-4 border-b-2 border-gray-200">
@@ -1199,44 +1327,43 @@ async function manejarSubmitLoginGate(event){
                         <input type="date" id="cierre_selector_fecha" onchange="generarCierreCaja()" class="border rounded p-1 text-sm font-bold text-gray-800">
                     </div>
                     <button onclick="generarCierreCaja()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded shadow no-print w-full sm:w-auto">
-                        Actualizar Datos de Caja
+                        Actualizar
                     </button>
                 </div>
 
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded border">
-                        <span class="font-medium text-gray-700">Total Ingresos por Ventas:</span>
-                        <span class="font-bold text-blue-600 text-lg" id="cierre_ventas">$ 0.00</span>
+                <div class="rc-dia">
+                    <div class="rc-dia-top"><span>Movimientos del día</span><b id="cierre_dia_titulo">—</b></div>
+                    <div class="rc-dia-tot">
+                        <div><p>Entró</p><b class="rc-mas" id="cierre_dia_entro">$ 0.00</b></div>
+                        <div><p>Salió</p><b class="rc-menos" id="cierre_dia_salio">$ 0.00</b></div>
+                        <div><p>Diferencia</p><b id="cierre_dia_neto">$ 0.00</b></div>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded border">
-                        <span class="font-medium text-gray-700">Total Abonos Cobrados (CxC):</span>
-                        <span class="font-bold text-blue-800 text-lg" id="cierre_cobros">$ 0.00</span>
-                    </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded border">
-                        <span class="font-medium text-gray-700">Total Dinero Pagado en Compras:</span>
-                        <span class="font-bold text-cacao text-lg" id="cierre_compras">$ 0.00</span>
-                    </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded border">
-                        <span class="font-medium text-gray-700">Total Gastos Operativos:</span>
-                        <span class="font-bold text-red-600 text-lg" id="cierre_gastos">$ 0.00</span>
-                    </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded border">
-                        <span class="font-medium text-gray-700">Total Abonos a Proveedores (CxP):</span>
-                        <span class="font-bold text-orange-600 text-lg" id="cierre_pagos_cxp">$ 0.00</span>
-                    </div>
-
-                    <div class="flex justify-between items-center p-4 bg-teal-50 rounded-lg border-2 border-teal-500 mt-6">
-                        <span class="text-lg font-bold text-teal-900">EFECTIVO NETO EN CAJA:</span>
-                        <span class="text-3xl font-extrabold text-teal-700" id="cierre_total_caja">$ 0.00</span>
-                    </div>
+                    <div id="cierre_dia_lista" class="rc-lista"><p class="rc-vacio">Elige una fecha para ver lo que entró y salió ese día.</p></div>
                 </div>
 
-                <div class="mt-8 flex gap-4 no-print">
-                    <button onclick="window.print()" class="flex-1 bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded shadow text-center">
-                        🖨️ Imprimir / Guardar Cierre (PDF)
+                <p class="rc-sub">Acumulado del ciclo</p>
+                <div class="rc-grupo">
+                    <p class="rc-grupo-t">Entradas</p>
+                    <div class="rc-fila"><span>Ventas cobradas</span><b class="rc-mas" id="cierre_ventas">$ 0.00</b></div>
+                    <div class="rc-fila"><span>Abonos cobrados (me deben)</span><b class="rc-mas" id="cierre_cobros">$ 0.00</b></div>
+                </div>
+                <div class="rc-grupo">
+                    <p class="rc-grupo-t">Salidas</p>
+                    <div class="rc-fila"><span>Pagado en compras</span><b class="rc-menos" id="cierre_compras">$ 0.00</b></div>
+                    <div class="rc-fila"><span>Gastos</span><b class="rc-menos" id="cierre_gastos">$ 0.00</b></div>
+                    <div class="rc-fila"><span>Abonos a proveedores (debo)</span><b class="rc-menos" id="cierre_pagos_cxp">$ 0.00</b></div>
+                </div>
+                <div class="rc-neto">
+                    <span>Efectivo en caja</span>
+                    <b id="cierre_total_caja">$ 0.00</b>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-3 no-print">
+                    <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-3 rounded shadow text-center">
+                        🖨️ Imprimir / PDF
                     </button>
-                    <button onclick="showSection('dashboard')" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-4 rounded shadow">
-                        Volver al Dashboard
+                    <button onclick="showSection('dashboard')" class="bg-white border border-gray-300 text-gray-800 font-bold py-3 px-3 rounded shadow">
+                        Volver al inicio
                     </button>
                 </div>
             </div>
@@ -1497,14 +1624,15 @@ async function manejarSubmitLoginGate(event){
                     <div class="grid grid-cols-1 md:grid-cols-6 gap-4 border-t pt-4 bg-gray-50 p-4 rounded">
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700">Tipo Cacao</label>
-                            <select id="tipo_cacao_venta" onchange="actualizarVistaGananciaVenta()" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                            <select id="tipo_cacao_venta" onchange="actualizarVistaGananciaVenta();pintarDisponibleVenta()" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
                                 <option value="seco">Seco</option>
                                 <option value="semi_seco">Semi seco</option>
                                 <option value="baba">En baba</option>
                             </select>
+                            <p id="venta_disponible" class="text-xs text-gray-600 mt-1"></p>
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700">Cantidad</label>
+                            <label class="block text-sm font-medium text-gray-700 flex justify-between items-center">Cantidad <button type="button" onclick="venderTodo()" class="text-xs font-bold underline" style="color:#5C3A21">Vender todo</button></label>
                             <input type="number" id="cantidad_venta" oninput="calcularTotalVenta()" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
                         </div>
                         <div class="md:col-span-2">
@@ -2251,6 +2379,57 @@ async function manejarSubmitLoginGate(event){
         </script>
 
         <!-- ================= COTIZADOR DE PRECIOS ================= -->
+        <!-- ================= REPORTES ================= -->
+        <section id="reportes" class="hidden smcacao-section-hidden">
+            <div class="dash-head">
+                <div>
+                    <p class="dash-saludo">Números reales sacados de tus compras, ventas, secados y gastos</p>
+                    <h1 class="dash-titulo">Reportes</h1>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <select id="rep_rango" onchange="cargarReportes()" class="dash-btn-sec">
+                        <option value="3">Últimos 3 meses</option>
+                        <option value="6" selected>Últimos 6 meses</option>
+                        <option value="12">Último año</option>
+                    </select>
+                    <button onclick="cargarReportes(true)" class="dash-btn-sec">Actualizar</button>
+                </div>
+            </div>
+
+            <div class="dash-card dash-mb">
+                <div class="dash-card-top"><svg class="dash-ico"><use href="#i-chart"/></svg><span>Ganancia por mes</span><span class="dash-chip" id="rep_gan_total">—</span></div>
+                <div id="rep_meses_barras" class="rep-barras"></div>
+                <div class="overflow-x-auto"><table class="rep-tabla">
+                    <thead><tr><th>Mes</th><th>Vendí</th><th>Costo del cacao vendido</th><th>Gastos</th><th>Ganancia</th><th>Margen</th></tr></thead>
+                    <tbody id="rep_meses"><tr><td colspan="6">Cargando…</td></tr></tbody>
+                </table></div>
+                <p class="dash-nota">Ganancia = lo que vendiste − lo que te costó ese cacao (precio de compra real de cada lote) − gastos del mes.</p>
+            </div>
+
+            <div class="dash-grid-2">
+                <div class="dash-card">
+                    <div class="dash-card-top"><svg class="dash-ico"><use href="#i-sun"/></svg><span>Rendimiento real del secado</span><span class="dash-chip" id="rep_rend_prom">—</span></div>
+                    <div id="rep_secados" class="rep-lista"><p class="rc-vacio">Cargando…</p></div>
+                    <p class="dash-nota" id="rep_rend_nota"></p>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-card-top"><svg class="dash-ico"><use href="#i-price"/></svg><span>Costo por quintal vs exportador</span></div>
+                    <label class="text-sm text-gray-600 block mb-1">Precio que paga el exportador por qq seco ($)</label>
+                    <input id="rep_exp" type="text" inputmode="decimal" oninput="pintarCostoVsExportador()" class="w-full border p-2 text-xl font-bold" placeholder="Ej: 230">
+                    <div class="rep-cmp" id="rep_cmp"></div>
+                    <p class="dash-nota">Costo por qq = lo que pagaste por la baba (o el seco) de cada lote, llevado a 100 lb de cacao seco.</p>
+                </div>
+            </div>
+
+            <div class="dash-card dash-mb">
+                <div class="dash-card-top"><svg class="dash-ico"><use href="#i-cart"/></svg><span>Compras de baba por mes</span></div>
+                <div class="overflow-x-auto"><table class="rep-tabla">
+                    <thead><tr><th>Mes</th><th>Libras</th><th>Pagado</th><th>Precio promedio / lb</th><th>Equivale a qq seco</th></tr></thead>
+                    <tbody id="rep_compras"><tr><td colspan="5">Cargando…</td></tr></tbody>
+                </table></div>
+            </div>
+        </section>
+
         <section id="cotizador" class="hidden smcacao-section-hidden">
             <h1 class="text-3xl font-bold text-cacao-dark mb-2">💹 Cotizador de Precios</h1>
             <p class="text-sm text-gray-500 mb-6">Pon el valor del mercado y lo que te ofrece tu exportador, y calcula cuánto le puedes pagar al productor. 1 quintal = 100 libras.</p>
@@ -3020,7 +3199,7 @@ async function guardarUsuarioAdmin(id){
     if (!mostrarModuloProtegido(sectionId)) return;
 
     try{ refrescarFechasFormularios(); }catch(e){}
-    const sections=['dashboard','compras','secado','inventario','gastos','cxc','cxp','cierre_caja','control_pro','terceros','ventas','cotizador','trabajadores','notas_campo'];
+    const sections=['dashboard','compras','secado','inventario','gastos','cxc','cxp','cierre_caja','control_pro','terceros','ventas','cotizador','trabajadores','notas_campo','reportes'];
     sections.forEach(id=>{
         const e=document.getElementById(id);
         if(e){e.classList.remove('smcacao-section-visible');e.classList.add('smcacao-section-hidden');}
@@ -3039,13 +3218,14 @@ async function guardarUsuarioAdmin(id){
 
     if(sectionId==='inventario'){ actualizarPantallaInventario(); try{ sincronizarInventarioDesdeSupabase(); }catch(e){} }
     if(sectionId==='compras'){ try{ sincronizarInventarioDesdeSupabase(); }catch(e){} try{ aplicarConfigCalculadora(); }catch(e){} try{ actualizarCalculadoraBaba(); }catch(e){} }
-    if(sectionId==='ventas'){ try{ sincronizarInventarioDesdeSupabase(); }catch(e){} try{ actualizarVistaGananciaVenta(); }catch(e){} }
+    if(sectionId==='ventas'){ try{ sincronizarInventarioDesdeSupabase(); }catch(e){} try{ actualizarVistaGananciaVenta(); }catch(e){} try{ pintarDisponibleVenta(); }catch(e){} }
     if(sectionId==='dashboard'){ actualizarDashboard(); try{ cargarFinanzasDesdeNube(); }catch(e){} try{ actualizarAvisoRespaldo(); }catch(e){} try{ actualizarAvisoAsistencia(); }catch(e){} try{ actualizarAvisoNotasCampo(); }catch(e){} try{ if(window.smcacaoV41Sincronizar) window.smcacaoV41Sincronizar(); }catch(e){} }
     if(sectionId==='cotizador') renderizarHistorialCotizaciones();
     if(sectionId==='trabajadores'){ try{ cargarTrabajadores(); }catch(e){} }
     if(sectionId==='notas_campo'){ try{ cargarNotasCampo(); }catch(e){} }
     if(sectionId==='gastos'){ try{ cargarGastosDelMes(); }catch(e){} try{ alternarTrabajadorGasto(); }catch(e){} }
     if(sectionId==='cierre_caja') generarCierreCaja();
+    if(sectionId==='reportes'){ try{ cargarReportes(); }catch(e){} }
     if(sectionId==='secado'){
         const f=document.getElementById('secar_fecha');
         if(f) f.value = fechaLocalISO();
@@ -3296,21 +3476,34 @@ async function guardarUsuarioAdmin(id){
             const total_cxc = bd_cxc.reduce((sum, item) => sum + item.saldo, 0);
             const total_cxp = bd_cxp.reduce((sum, item) => sum + item.saldo, 0);
 
-            document.getElementById('dash_cacao').innerText = totalLibras.toFixed(2) + ' lbs';
-            document.getElementById('dash_invertido').innerText = '$ ' + finanzas.total_compras.toFixed(2);
-            document.getElementById('dash_ventas').innerText = '$ ' + finanzas.total_ingresos_ventas.toFixed(2);
-            document.getElementById('dash_gastos').innerText = '$ ' + finanzas.total_gastos.toFixed(2);
-            document.getElementById('dash_bruta').innerText = '$ ' + gananciaBruta.toFixed(2);
-            document.getElementById('dash_neta').innerText = '$ ' + gananciaNeta.toFixed(2);
-            document.getElementById('dash_cxc').innerText = '$ ' + total_cxc.toFixed(2);
-            document.getElementById('dash_cxp').innerText = '$ ' + total_cxp.toFixed(2);
-            document.getElementById('dash_caja').innerText = '$ ' + finanzas.caja.toFixed(2);
+            const $m = n => '$ ' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const $lb = n => Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + ' lb';
+            document.getElementById('dash_cacao').innerText = $lb(totalLibras) + ' en total';
+            const setT = (id, v) => { const e = document.getElementById(id); if (e) e.innerText = v; };
+            setT('dash_inv_baba', $lb(bd_inventario.baba.libras));
+            setT('dash_inv_semi', $lb(bd_inventario.semi_seco.libras));
+            setT('dash_inv_seco', $lb(bd_inventario.seco.libras));
+            document.getElementById('dash_invertido').innerText = $m(finanzas.total_compras);
+            document.getElementById('dash_ventas').innerText = $m(finanzas.total_ingresos_ventas);
+            document.getElementById('dash_gastos').innerText = $m(finanzas.total_gastos);
+            document.getElementById('dash_bruta').innerText = $m(gananciaBruta);
+            document.getElementById('dash_neta').innerText = $m(gananciaNeta);
+            document.getElementById('dash_neta').style.color = gananciaNeta < 0 ? '#B42318' : '';
+            document.getElementById('dash_cxc').innerText = $m(total_cxc);
+            document.getElementById('dash_cxp').innerText = $m(total_cxp);
+            document.getElementById('dash_caja').innerText = $m(finanzas.caja);
+            try {
+                const hora = new Date().getHours();
+                const nombre = (perfilUsuario && (perfilUsuario.nombre || '').split(' ')[0]) || '';
+                setT('dash_saludo', (hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches') + (nombre && nombre !== 'Administrador' ? ', ' + nombre : '') + ' · ' + new Date().toLocaleDateString('es-EC', { weekday: 'long', day: 'numeric', month: 'long' }));
+            } catch (e) {}
+            try { pintarSemanaCompras(); } catch (e) {}
 
             const elCaja = document.getElementById('dash_caja');
             if(finanzas.caja < 0) {
-                elCaja.classList.replace('text-teal-600', 'text-red-600');
+                elCaja.classList.add('text-red-600');
             } else {
-                elCaja.classList.replace('text-red-600', 'text-teal-600');
+                elCaja.classList.remove('text-red-600');
             }
 
             const valorInventario = Object.values(bd_inventario).reduce((sum, x) => sum + Number(x.costo_total || 0), 0);
@@ -3319,8 +3512,12 @@ async function guardarUsuarioAdmin(id){
             const vi = document.getElementById('dash_valor_inventario');
             const as = document.getElementById('dash_alertas_stock');
             const mg = document.getElementById('dash_margen');
-            if (vi) vi.innerText = '$ ' + valorInventario.toFixed(2);
+            if (vi) vi.innerText = $m(valorInventario);
             if (as) as.innerText = alertas.length;
+            const at = document.getElementById('dash_alertas_txt');
+            if (at) { const lab = { seco: 'seco', semi_seco: 'semiseco', baba: 'baba' }; const conMin = alertas.filter(([t]) => Number((config_inventario[t] || {}).minimo || 0) > 0);
+                at.lastChild && at.lastChild.nodeType === 3 && at.removeChild(at.lastChild);
+                at.appendChild(document.createTextNode(conMin.length ? '⚠️ Por debajo del mínimo: ' + conMin.map(([t]) => lab[t]).join(', ') : '')); }
             if (mg) mg.innerText = margen.toFixed(1) + '%';
             const al = document.getElementById('dash_alertas_lista');
             if (al) {
@@ -3331,6 +3528,31 @@ async function guardarUsuarioAdmin(id){
             }
         }
 
+        // Barras de la semana: libras de baba compradas cada día (últimos 7 días).
+        let _semanaCache = { t: 0, datos: null };
+        async function pintarSemanaCompras() {
+            const box = document.getElementById('dash_semana'); if (!box) return;
+            const dias = []; const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+            for (let i = 6; i >= 0; i--) { const d = new Date(hoy); d.setDate(d.getDate() - i); dias.push(d); }
+            if (!_semanaCache.datos || Date.now() - _semanaCache.t > 60000) {
+                try {
+                    const prod = await obtenerProductoId('baba');
+                    const { data } = await supabaseClient.from('movimientos_inventario').select('cantidad,fecha')
+                        .eq('empresa_id', perfilUsuario.empresa_id).eq('tipo', 'compra').eq('producto_id', prod).gte('fecha', dias[0].toISOString());
+                    _semanaCache = { t: Date.now(), datos: data || [] };
+                } catch (e) { _semanaCache = { t: Date.now(), datos: _semanaCache.datos || [] }; }
+            }
+            const porDia = dias.map(d => {
+                const fin = new Date(d); fin.setDate(fin.getDate() + 1);
+                return (_semanaCache.datos || []).filter(x => { const f = new Date(x.fecha); return f >= d && f < fin; }).reduce((t, x) => t + Number(x.cantidad || 0), 0);
+            });
+            const max = Math.max(...porDia, 1), total = porDia.reduce((a, b) => a + b, 0);
+            const nombres = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+            box.innerHTML = porDia.map((v, i) => `<div class="dash-barra${v ? '' : ' vacia'}${i === 6 ? ' hoy' : ''}" title="${v.toFixed(1)} lb">
+                <em>${v ? Math.round(v) : ''}</em><i style="height:${Math.max(3, v / max * 62)}px"></i><small>${i === 6 ? 'hoy' : nombres[dias[i].getDay()]}</small></div>`).join('');
+            const t = document.getElementById('dash_semana_total'); if (t) t.textContent = total ? Math.round(total).toLocaleString('en-US') + ' lb' : 'sin compras';
+        }
+
         let capitalSaveTimer = null;
         // (El capital ahora se cambia con guardarCapitalManual(), que lo registra en la base.)
 
@@ -3338,13 +3560,149 @@ async function guardarUsuarioAdmin(id){
             const fechaSeleccionada = document.getElementById('cierre_selector_fecha').value;
             const fechaFormateada = fechaSeleccionada ? new Date(fechaSeleccionada + 'T00:00:00').toLocaleDateString('es-EC', { year: 'numeric', month: 'long', day: 'numeric' }) : '-';
             
+            const $m = n => '$ ' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('cierre_fecha_actual').innerText = fechaFormateada;
-            document.getElementById('cierre_ventas').innerText = '$ ' + finanzas.total_ingresos_ventas.toFixed(2);
-            document.getElementById('cierre_cobros').innerText = '$ ' + total_abonos_cobrados.toFixed(2);
-            document.getElementById('cierre_compras').innerText = '$ ' + finanzas.total_compras.toFixed(2);
-            document.getElementById('cierre_gastos').innerText = '$ ' + finanzas.total_gastos.toFixed(2);
-            document.getElementById('cierre_pagos_cxp').innerText = '$ ' + total_abonos_pagados.toFixed(2);
-            document.getElementById('cierre_total_caja').innerText = '$ ' + finanzas.caja.toFixed(2);
+            document.getElementById('cierre_ventas').innerText = $m(finanzas.total_ingresos_ventas);
+            document.getElementById('cierre_cobros').innerText = $m(total_abonos_cobrados);
+            document.getElementById('cierre_compras').innerText = $m(finanzas.total_compras);
+            document.getElementById('cierre_gastos').innerText = $m(finanzas.total_gastos);
+            document.getElementById('cierre_pagos_cxp').innerText = $m(total_abonos_pagados);
+            document.getElementById('cierre_total_caja').innerText = $m(finanzas.caja);
+            pintarMovimientosDia(fechaSeleccionada);
+        }
+
+        // Lo que entró y salió de la caja en el día elegido (de la tabla movimientos_caja).
+        async function pintarMovimientosDia(fechaISO) {
+            const box = document.getElementById('cierre_dia_lista'); if (!box) return;
+            const $m = n => '$ ' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const hoyISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+            const f = fechaISO || hoyISO;
+            const ini = new Date(f + 'T00:00:00'), fin = new Date(ini); fin.setDate(fin.getDate() + 1);
+            document.getElementById('cierre_dia_titulo').textContent = ini.toLocaleDateString('es-EC', { weekday: 'long', day: 'numeric', month: 'short' });
+            if (typeof supabaseClient === 'undefined' || !supabaseClient || !perfilUsuario || !perfilUsuario.empresa_id) { box.innerHTML = '<p class="rc-vacio">Conéctate para ver los movimientos del día.</p>'; return; }
+            box.innerHTML = '<p class="rc-vacio">Cargando…</p>';
+            try {
+                const { data, error } = await supabaseClient.from('movimientos_caja').select('tipo,concepto,monto,fecha,referencia_tipo')
+                    .eq('empresa_id', perfilUsuario.empresa_id).gte('fecha', ini.toISOString()).lt('fecha', fin.toISOString()).order('fecha', { ascending: true });
+                if (error) throw error;
+                const movs = (data || []).filter(m => m.referencia_tipo !== 'cierre_caja' || !/fondo inicial/i.test(m.concepto || ''));
+                try {
+                    const g = await supabaseClient.from('gastos').select('categoria,descripcion,monto,created_at').eq('empresa_id', perfilUsuario.empresa_id).eq('fecha', f);
+                    (g.data || []).forEach(x => movs.push({ tipo: 'egreso', concepto: 'Gasto: ' + (x.descripcion && x.descripcion !== '-' ? x.descripcion : (x.categoria || '')), monto: x.monto, fecha: x.created_at || (f + 'T12:00:00') }));
+                    movs.sort((x, y) => new Date(x.fecha) - new Date(y.fecha));
+                } catch (e) {}
+                const esEntrada = m => /ingreso|entrada|venta|cobro/i.test(m.tipo || '');
+                const entro = movs.filter(esEntrada).reduce((t, m) => t + Number(m.monto || 0), 0);
+                const salio = movs.filter(m => !esEntrada(m)).reduce((t, m) => t + Number(m.monto || 0), 0);
+                document.getElementById('cierre_dia_entro').textContent = $m(entro);
+                document.getElementById('cierre_dia_salio').textContent = $m(salio);
+                const n = document.getElementById('cierre_dia_neto'); n.textContent = (entro - salio < 0 ? '− ' : '') + $m(Math.abs(entro - salio)); n.style.color = entro - salio < 0 ? '#B42318' : '#1B5E20';
+                const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+                box.innerHTML = movs.length ? movs.slice().reverse().map(m => `<div class="rc-mov"><span>${esc(m.concepto || m.referencia_tipo || m.tipo)}<small>${new Date(m.fecha).toLocaleTimeString('es-EC', { hour: '2-digit', minute: '2-digit' })}</small></span><b class="${esEntrada(m) ? 'rc-mas' : 'rc-menos'}">${$m(m.monto)}</b></div>`).join('')
+                    : '<p class="rc-vacio">No hubo movimientos de caja este día.</p>';
+            } catch (e) { box.innerHTML = '<p class="rc-vacio">No se pudieron cargar los movimientos: ' + (e.message || e) + '</p>'; }
+        }
+
+        // ===================== REPORTES =====================
+        let _repCache = null;
+        async function cargarReportes(forzar) {
+            const $m = n => '$ ' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const tb = document.getElementById('rep_meses'); if (!tb) return;
+            if (typeof supabaseClient === 'undefined' || !supabaseClient || !perfilUsuario || !perfilUsuario.empresa_id) {
+                tb.innerHTML = '<tr><td colspan="6">Conéctate para ver los reportes.</td></tr>'; return;
+            }
+            const meses = Number(document.getElementById('rep_rango').value || 6);
+            const desde = new Date(); desde.setDate(1); desde.setHours(0, 0, 0, 0); desde.setMonth(desde.getMonth() - (meses - 1));
+            const desdeISO = desde.toISOString().slice(0, 10);
+            const clave = meses;
+            if (forzar || !_repCache || _repCache.clave !== clave || Date.now() - _repCache.t > 120000) {
+                tb.innerHTML = '<tr><td colspan="6">Cargando…</td></tr>';
+                try {
+                    const emp = perfilUsuario.empresa_id;
+                    const [idBaba, idSeco] = await Promise.all([obtenerProductoId('baba'), obtenerProductoId('seco')]);
+                    const [v, mv, g, mc, ls] = await Promise.all([
+                        supabaseClient.from('ventas').select('fecha,total,estado').eq('empresa_id', emp).gte('fecha', desdeISO),
+                        supabaseClient.from('movimientos_inventario').select('fecha,cantidad,costo_unitario').eq('empresa_id', emp).eq('tipo', 'venta').gte('fecha', desde.toISOString()),
+                        supabaseClient.from('gastos').select('fecha,monto').eq('empresa_id', emp).gte('fecha', desdeISO),
+                        supabaseClient.from('movimientos_inventario').select('fecha,cantidad,costo_unitario').eq('empresa_id', emp).eq('tipo', 'compra').eq('producto_id', idBaba).gte('fecha', desde.toISOString()),
+                        supabaseClient.from('lotes').select('codigo,fecha_ingreso,cantidad_inicial,costo_unitario,notas').eq('empresa_id', emp).eq('producto_id', idSeco).like('codigo', 'SEC%').order('fecha_ingreso', { ascending: false }).limit(30)
+                    ]);
+                    for (const r of [v, mv, g, mc, ls]) if (r.error) throw r.error;
+                    _repCache = { clave, t: Date.now(), desde, meses, ventas: (v.data || []).filter(x => x.estado !== 'anulada'), movVentas: mv.data || [], gastos: g.data || [], compras: mc.data || [], secados: ls.data || [] };
+                } catch (e) { tb.innerHTML = '<tr><td colspan="6">No se pudo cargar: ' + (e.message || e) + '</td></tr>'; return; }
+            }
+            const d = _repCache;
+            // --- meses ---
+            const claveMes = f => String(f).slice(0, 7);
+            const lista = []; for (let i = 0; i < d.meses; i++) { const x = new Date(d.desde); x.setMonth(x.getMonth() + i); lista.push(x.toISOString().slice(0, 7)); }
+            const fila = {}; lista.forEach(k => fila[k] = { vendi: 0, costo: 0, gastos: 0, lb: 0, pagado: 0 });
+            const fechaLocal = f => { const x = new Date(f); return new Date(x.getTime() - x.getTimezoneOffset() * 60000).toISOString().slice(0, 7); };
+            d.ventas.forEach(x => { const k = claveMes(x.fecha); if (fila[k]) fila[k].vendi += Number(x.total || 0); });
+            d.movVentas.forEach(x => { const k = fechaLocal(x.fecha); if (fila[k]) fila[k].costo += Number(x.cantidad || 0) * Number(x.costo_unitario || 0); });
+            d.gastos.forEach(x => { const k = claveMes(x.fecha); if (fila[k]) fila[k].gastos += Number(x.monto || 0); });
+            d.compras.forEach(x => { const k = fechaLocal(x.fecha); if (fila[k]) { fila[k].lb += Number(x.cantidad || 0); fila[k].pagado += Number(x.cantidad || 0) * Number(x.costo_unitario || 0); } });
+            while (lista.length > 1) { const f = fila[lista[0]]; if (f.vendi || f.costo || f.gastos || f.lb) break; lista.shift(); }
+            const nombreMes = k => new Date(k + '-15T12:00:00').toLocaleDateString('es-EC', { month: 'short', year: '2-digit' });
+            let totGan = 0;
+            const gans = lista.map(k => { const f = fila[k]; f.gan = f.vendi - f.costo - f.gastos; totGan += f.gan; return f.gan; });
+            const maxAbs = Math.max(1, ...gans.map(Math.abs));
+            document.getElementById('rep_meses_barras').innerHTML = lista.map((k, i) => `<div class="rep-bar${gans[i] < 0 ? ' neg' : ''}"><em>${gans[i] ? (gans[i] < 0 ? '−' : '') + '$' + Math.round(Math.abs(gans[i])).toLocaleString('en-US') : ''}</em><i style="height:${Math.max(2, Math.abs(gans[i]) / maxAbs * 90)}px"></i><small>${nombreMes(k)}</small></div>`).join('');
+            tb.innerHTML = lista.slice().reverse().map(k => { const f = fila[k]; const mg = f.vendi > 0 ? (f.gan / f.vendi * 100) : 0;
+                return `<tr><td>${nombreMes(k)}</td><td>${$m(f.vendi)}</td><td>${$m(f.costo)}</td><td>${$m(f.gastos)}</td><td><b style="color:${f.gan < 0 ? '#B42318' : '#1B5E20'}">${$m(f.gan)}</b></td><td>${f.vendi > 0 ? mg.toFixed(1) + '%' : '—'}</td></tr>`; }).join('');
+            const gt = document.getElementById('rep_gan_total'); gt.textContent = 'Total: ' + $m(totGan); gt.style.color = totGan < 0 ? '#B42318' : '';
+            // --- secados ---
+            const secs = d.secados.map(l => { const m = /([\d.,]+)\s*lb de (baba|semi)/i.exec(l.notas || ''); const origen = m ? Number(m[1].replace(/,/g, '')) : 0;
+                return { fecha: l.fecha_ingreso, seco: Number(l.cantidad_inicial || 0), origen, tipo: m ? m[2].toLowerCase() : '', costo: Number(l.costo_unitario || 0) }; }).filter(s => s.origen > 0 && s.tipo === 'baba');
+            const box = document.getElementById('rep_secados');
+            if (!secs.length) { box.innerHTML = '<p class="rc-vacio">Todavía no hay secados de baba registrados.</p>'; document.getElementById('rep_rend_prom').textContent = '—'; }
+            else {
+                const totO = secs.reduce((t, s) => t + s.origen, 0), totS = secs.reduce((t, s) => t + s.seco, 0); const prom = totS / totO * 100;
+                document.getElementById('rep_rend_prom').textContent = 'Promedio ' + prom.toFixed(1) + '%';
+                box.innerHTML = secs.slice(0, 8).map(s => { const r = s.seco / s.origen * 100;
+                    return `<div class="rep-sec"><span>${new Date(s.fecha + 'T12:00:00').toLocaleDateString('es-EC', { day: 'numeric', month: 'short' })} · ${s.origen.toLocaleString('en-US')} lb baba → ${s.seco.toLocaleString('en-US')} lb seco</span><b class="${r < prom - 2 ? 'bajo' : r > prom + 2 ? 'alto' : ''}">${r.toFixed(1)}%</b><small>Costo: ${$m(s.costo * 100)} por qq seco</small></div>`; }).join('');
+                const lbPorLb = totO / totS;
+                document.getElementById('rep_rend_nota').innerHTML = `En promedio necesitas <b>${lbPorLb.toFixed(2)} lb de baba</b> para sacar 1 lb de seco (${Math.round(lbPorLb * 100).toLocaleString('en-US')} lb de baba por quintal seco). Total: ${Math.round(totO).toLocaleString('en-US')} lb baba → ${Math.round(totS).toLocaleString('en-US')} lb seco.`;
+                d.rend = prom / 100; d.ultCostoQq = secs[0].costo * 100;
+            }
+            // --- compras de baba por mes ---
+            const rend = d.rend || 0.38;
+            document.getElementById('rep_compras').innerHTML = lista.slice().reverse().map(k => { const f = fila[k]; const p = f.lb ? f.pagado / f.lb : 0;
+                return `<tr><td>${nombreMes(k)}</td><td>${Math.round(f.lb).toLocaleString('en-US')} lb</td><td>${$m(f.pagado)}</td><td>${f.lb ? '$ ' + p.toFixed(4) : '—'}</td><td>${f.lb ? (f.lb * rend / 100).toFixed(2) + ' qq' : '—'}</td></tr>`; }).join('');
+            d.precioBabaUlt = (() => { for (const k of lista.slice().reverse()) if (fila[k].lb) return fila[k].pagado / fila[k].lb; return 0; })();
+            // --- exportador ---
+            const inp = document.getElementById('rep_exp');
+            if (inp && !inp.value) { const c = (bd_cotizaciones || [])[0]; if (c && c.exp_qq) inp.value = c.exp_qq; }
+            pintarCostoVsExportador();
+        }
+
+        function pintarCostoVsExportador() {
+            const box = document.getElementById('rep_cmp'); if (!box) return;
+            const $m = n => '$ ' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const exp = parseFloat(String(document.getElementById('rep_exp').value || '').replace(',', '.')) || 0;
+            const d = _repCache || {};
+            const lbSeco = Number((bd_inventario.seco || {}).libras || 0);
+            const costoBodega = lbSeco > 0 ? Number(bd_inventario.seco.costo_total || 0) / lbSeco * 100 : 0;
+            const costoHoy = d.precioBabaUlt && d.rend ? d.precioBabaUlt / d.rend * 100 : 0;
+            const ref = costoBodega || d.ultCostoQq || costoHoy;
+            const margen = exp - ref;
+            box.innerHTML = `
+                <div><p>Costo del seco en bodega</p><b>${costoBodega ? $m(costoBodega) : '—'}</b><p>por qq · ${lbSeco.toLocaleString('en-US', { maximumFractionDigits: 1 })} lb</p></div>
+                <div><p>Costo del último secado</p><b>${d.ultCostoQq ? $m(d.ultCostoQq) : '—'}</b><p>por qq seco</p></div>
+                <div><p>Si compras baba al precio de este mes</p><b>${costoHoy ? $m(costoHoy) : '—'}</b><p>por qq seco (rend. ${d.rend ? (d.rend * 100).toFixed(1) : '—'}%)</p></div>
+                <div><p>Exportador</p><b>${exp ? $m(exp) : '—'}</b><p>por qq seco</p></div>
+                ${exp && ref ? `<div class="rep-big${margen < 0 ? ' neg' : ''}"><p>${margen < 0 ? 'Pierdes' : 'Ganas'} por quintal (antes de gastos)</p><b>${margen < 0 ? '− ' : ''}${$m(Math.abs(margen))}</b>${lbSeco > 0 && costoBodega ? `<p>Si vendes hoy todo el seco de bodega: ${margen < 0 ? 'pérdida' : 'ganancia'} de <b style="font-size:15px">${$m(Math.abs(exp - costoBodega) * lbSeco / 100)}</b></p>` : ''}</div>` : '<div class="rep-big"><p>Escribe el precio del exportador para ver cuánto ganas por quintal.</p></div>'}`;
+        }
+
+        function pintarDisponibleVenta() {
+            const t = document.getElementById('tipo_cacao_venta')?.value; const el = document.getElementById('venta_disponible'); if (!t || !el) return;
+            const lb = Number((bd_inventario[t] || {}).libras || 0);
+            el.innerHTML = 'Tienes <b>' + lb.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' lb</b> (' + (lb / 100).toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' qq) en bodega';
+        }
+        function venderTodo() {
+            const t = document.getElementById('tipo_cacao_venta').value; const lb = Number((bd_inventario[t] || {}).libras || 0);
+            document.getElementById('unidad_venta').value = 'libras';
+            document.getElementById('cantidad_venta').value = Math.round(lb * 100) / 100;
+            calcularTotalVenta();
         }
 
         function calcularTotal() {
@@ -4992,19 +5350,23 @@ async function guardarUsuarioAdmin(id){
 <style>
   #cashClosingModule{display:none;padding:18px}
   .cash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-  .cash-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+  .cash-card{background:#fff;border:1px solid #EADFCF;border-radius:16px;padding:16px;box-shadow:0 1px 2px rgba(43,26,18,.06),0 4px 14px rgba(43,26,18,.05)}
+  .cash-card h3{color:#7A6A5C;text-transform:uppercase;letter-spacing:.05em;font-size:12.5px !important}
+  #cashClosingModule h2{color:#2B1A12;font-weight:800}
+  #cashClosingModule #resumenFacilDia h2{color:#F6EBC8 !important}
+  #cashClosingModule .cash-value{color:#2B1A12}
   .cash-card h3{margin:0 0 8px;font-size:15px}
   .cash-value{font-size:24px;font-weight:800}
   .cash-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px}
   .cash-form label{font-size:12px;font-weight:700;color:#475569;display:block;margin-bottom:5px}
-  .cash-form input,.cash-form select,.cash-form textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #cbd5e1;border-radius:9px}
+  .cash-form input,.cash-form select,.cash-form textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #DCCDB8;border-radius:10px;background:#fff}
   .cash-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
-  .cash-btn{border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer}
-  .cash-btn.primary{background:#111827;color:#fff}.cash-btn.success{background:#15803d;color:#fff}
-  .cash-btn.warn{background:#b45309;color:#fff}.cash-btn.secondary{background:#e2e8f0;color:#0f172a}
+  .cash-btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+  .cash-btn.primary{background:#2B1A12;color:#fff}.cash-btn.success{background:#1B5E20;color:#fff}
+  .cash-btn.warn{background:#5C3A21;color:#fff}.cash-btn.secondary{background:#fff;color:#2B1A12;border:1px solid #DCCDB8}
   .cash-table{width:100%;min-width:460px;border-collapse:collapse;margin-top:14px;font-size:13px}
-  .cash-table th,.cash-table td{border-bottom:1px solid #e5e7eb;padding:9px;text-align:left}
-  .cash-table th{background:#f8fafc}
+  .cash-table th,.cash-table td{border-bottom:1px solid #EFE5D6;padding:9px;text-align:left}
+  .cash-table th{background:#F3ECE1;color:#5C3A21}
   .cash-diff{font-size:26px;font-weight:900}
   .cash-ok{color:#15803d}.cash-bad{color:#b91c1c}
   .cash-note{font-size:12px;color:#64748b}
@@ -5021,7 +5383,7 @@ async function guardarUsuarioAdmin(id){
 <section id="cashClosingModule" style="display:none !important">
 
   <!-- ===== Resumen fácil del día (lo esencial, sin llenar formularios) ===== -->
-  <div id="resumenFacilDia" style="background:linear-gradient(135deg,#1B5E20,#2e7d32);border-radius:16px;padding:20px;margin-bottom:20px;color:#fff;">
+  <div id="resumenFacilDia" style="background:linear-gradient(140deg,#2B1A12,#4A2E1F);border-radius:18px;padding:20px;margin-bottom:20px;color:#F3E9DC;box-shadow:0 10px 28px rgba(43,26,18,.22);">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
       <h2 style="margin:0;font-size:18px;">📅 Resumen de hoy</h2>
       <button onclick="cargarResumenFacilDia()" style="background:rgba(255,255,255,.18);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;">🔄 Actualizar</button>
@@ -5039,7 +5401,7 @@ async function guardarUsuarioAdmin(id){
         <div style="font-size:12px;opacity:.85;font-weight:700;text-transform:uppercase;">💸 Gastado hoy</div>
         <div id="rfGastadoHoy" style="font-size:26px;font-weight:800;margin-top:4px;">$ 0.00</div>
       </div>
-      <div style="background:#D4AF37;color:#1B5E20;border-radius:12px;padding:14px;">
+      <div style="background:#D4AF37;color:#2B1A12;border-radius:12px;padding:14px;">
         <div style="font-size:12px;opacity:.85;font-weight:700;text-transform:uppercase;">🏦 Capital que queda</div>
         <div id="rfCapitalQueda" style="font-size:26px;font-weight:800;margin-top:4px;">$ 0.00</div>
       </div>
@@ -5062,9 +5424,9 @@ async function guardarUsuarioAdmin(id){
   </div>
 
   <!-- ===== Resumen de la semana ===== -->
-  <div id="resumenFacilSemana" style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.05);">
+  <div id="resumenFacilSemana" style="background:#fff;border:1px solid #EADFCF;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 1px 2px rgba(43,26,18,.06),0 4px 14px rgba(43,26,18,.05);">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
-      <h2 style="margin:0;font-size:18px;color:#1B5E20;">🗓️ Resumen de esta semana</h2>
+      <h2 style="margin:0;font-size:18px;color:#2B1A12;">🗓️ Resumen de esta semana</h2>
       <span id="rfSemanaRango" style="font-size:11px;color:#9ca3af;"></span>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;">
@@ -5076,9 +5438,9 @@ async function guardarUsuarioAdmin(id){
         <div style="font-size:12px;color:#991b1b;font-weight:700;text-transform:uppercase;">⬇️ Egreso semana</div>
         <div id="rfEgresoSemana" style="font-size:24px;font-weight:800;margin-top:4px;color:#991b1b;">$ 0.00</div>
       </div>
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;">
-        <div style="font-size:12px;color:#334155;font-weight:700;text-transform:uppercase;">⚖️ Balance semana</div>
-        <div id="rfBalanceSemana" style="font-size:24px;font-weight:800;margin-top:4px;color:#334155;">$ 0.00</div>
+      <div style="background:#FBF8F3;border:1px solid #EADFCF;border-radius:12px;padding:14px;">
+        <div style="font-size:12px;color:#2B1A12;font-weight:700;text-transform:uppercase;">⚖️ Balance semana</div>
+        <div id="rfBalanceSemana" style="font-size:24px;font-weight:800;margin-top:4px;color:#2B1A12;">$ 0.00</div>
       </div>
     </div>
   </div>
@@ -5103,7 +5465,7 @@ async function guardarUsuarioAdmin(id){
 
   <div class="cash-card" style="margin-top:15px">
     <h3>Apertura y cierre</h3>
-    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:#1e3a8a;">
+    <div style="background:#FBF6EC;border:1px solid #EADFCF;border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;color:#5C3A21;">
       <b>¿Cómo funciona?</b>
       <ol style="margin:6px 0 0 18px;padding:0;">
         <li>Revisa el <b>"Fondo inicial"</b> — la app te sugiere lo que contaste en tu último cierre. Si no metiste ni sacaste dinero de la caja desde entonces, déjalo así; si sí, corrígelo. Luego toca <b>"▶️ Abrir caja"</b>.</li>
@@ -5115,7 +5477,7 @@ async function guardarUsuarioAdmin(id){
     <div class="cash-form">
       <div><label>Fecha</label><input id="cashDate" type="date"></div>
       <div><label>Cajero</label><input id="cashOperator" type="text" readonly></div>
-      <div><label>Fondo inicial</label><input id="cashOpening" type="number" min="0" step="0.01" value="0"><div id="cashOpeningHint" style="font-size:11px;color:#1e3a8a;margin-top:3px;"></div></div>
+      <div><label>Fondo inicial</label><input id="cashOpening" type="number" min="0" step="0.01" value="0"><div id="cashOpeningHint" style="font-size:11px;color:#5C3A21;margin-top:3px;"></div></div>
       <div><label>Efectivo contado al cierre</label><input id="cashCounted" type="number" min="0" step="0.01" value="0"></div>
     </div>
     <div class="cash-form">
@@ -5125,7 +5487,7 @@ async function guardarUsuarioAdmin(id){
     </div>
     <div class="cash-actions">
       <button class="cash-btn primary" onclick="openCashRegister()">1️⃣ ▶️ Abrir caja</button>
-      <button class="cash-btn" style="background:#0f766e;color:#fff;" onclick="abrirModalRefuerzoCaja()">➕ Agregar dinero</button>
+      <button class="cash-btn" style="background:#D4AF37;color:#2B1A12;" onclick="abrirModalRefuerzoCaja()">➕ Agregar dinero</button>
       <button class="cash-btn warn" onclick="recalculateCash()">2️⃣ 🔄 Recalcular</button>
       <button class="cash-btn success" onclick="closeCashRegister()">3️⃣ 🔒 Cerrar caja</button>
     </div>
@@ -5156,9 +5518,9 @@ async function guardarUsuarioAdmin(id){
   <div id="cashPrintReceipt" style="display:none;">
     <div style="text-align:center;margin-bottom:10px;">
       <img data-logo="1" alt="SM CACAO" style="width:85px;height:85px;border-radius:50%;border:2px solid #D4AF37;object-fit:cover;">
-      <h1 style="margin:8px 0 0;font-size:19px;color:#1B5E20;letter-spacing:.5px;">SM CACAO</h1>
+      <h1 style="margin:8px 0 0;font-size:19px;color:#2B1A12;letter-spacing:.5px;">SM CACAO</h1>
       <p style="margin:2px 0 8px;font-size:10.5px;color:#555;">Compra • Venta • Comercialización de Cacao</p>
-      <div style="border-top:2px solid #1B5E20;border-bottom:2px solid #1B5E20;padding:6px 0;font-size:15px;font-weight:800;color:#1B5E20;">CIERRE DE CAJA DIARIO</div>
+      <div style="border-top:2px solid #2B1A12;border-bottom:2px solid #2B1A12;padding:6px 0;font-size:15px;font-weight:800;color:#2B1A12;">CIERRE DE CAJA DIARIO</div>
     </div>
 
     <table style="width:100%;font-size:12.5px;margin:10px 0;border-collapse:collapse;">
@@ -5167,7 +5529,7 @@ async function guardarUsuarioAdmin(id){
       <tr><td style="padding:2px 0;"><b>Impreso:</b></td><td id="cpHora" style="text-align:right;padding:2px 0;"></td></tr>
     </table>
 
-    <div style="background:#1B5E20;color:#fff;padding:6px 10px;font-size:12.5px;font-weight:700;margin-top:12px;">RESUMEN DEL DÍA</div>
+    <div style="background:#2B1A12;color:#fff;padding:6px 10px;font-size:12.5px;font-weight:700;margin-top:12px;">RESUMEN DEL DÍA</div>
     <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
       <tr><td style="padding:6px 4px;border-bottom:1px solid #ddd;">🛒 Comprado hoy</td><td id="cpComprado" style="padding:6px 4px;border-bottom:1px solid #ddd;text-align:right;"></td></tr>
       <tr><td style="padding:6px 4px;border-bottom:1px solid #ddd;">💰 Vendido hoy</td><td id="cpVendido" style="padding:6px 4px;border-bottom:1px solid #ddd;text-align:right;"></td></tr>
@@ -5177,7 +5539,7 @@ async function guardarUsuarioAdmin(id){
       <tr><td style="padding:8px 4px;font-weight:800;">🏦 Capital que queda</td><td id="cpCapital" style="padding:8px 4px;text-align:right;font-weight:800;"></td></tr>
     </table>
 
-    <div style="background:#1B5E20;color:#fff;padding:6px 10px;font-size:12.5px;font-weight:700;margin-top:14px;">DETALLE DEL TURNO DE CAJA</div>
+    <div style="background:#2B1A12;color:#fff;padding:6px 10px;font-size:12.5px;font-weight:700;margin-top:14px;">DETALLE DEL TURNO DE CAJA</div>
     <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
       <tr><td style="padding:6px 4px;border-bottom:1px solid #ddd;">Fondo inicial</td><td id="cpFondoInicial" style="padding:6px 4px;border-bottom:1px solid #ddd;text-align:right;"></td></tr>
       <tr><td style="padding:6px 4px;border-bottom:1px solid #ddd;">Ventas en efectivo</td><td id="cpVentasTurno" style="padding:6px 4px;border-bottom:1px solid #ddd;text-align:right;"></td></tr>
@@ -5203,14 +5565,14 @@ async function guardarUsuarioAdmin(id){
   <!-- ===== Agregar dinero a la caja (sin cerrar) ===== -->
   <div id="modalRefuerzoCaja" style="display:none;position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.7);align-items:center;justify-content:center;padding:16px;">
     <div style="background:#fff;border-radius:14px;padding:20px;max-width:380px;width:100%;">
-      <h3 style="margin:0 0 6px;font-size:18px;font-weight:800;color:#0f766e;">➕ Agregar dinero a la caja</h3>
+      <h3 style="margin:0 0 6px;font-size:18px;font-weight:800;color:#2B1A12;">➕ Agregar dinero a la caja</h3>
       <p style="font-size:12px;color:#6b7280;margin:0 0 14px;">Se suma al efectivo esperado de la caja abierta ahora mismo, y también a tu Capital disponible.</p>
       <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Monto a agregar ($)</label>
       <input type="number" min="0.01" step="0.01" id="refuerzoMonto" placeholder="Ej: 100" style="width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:10px;font-size:16px;">
       <label style="font-size:13px;font-weight:600;display:block;margin:12px 0 4px;">Motivo (opcional)</label>
       <input type="text" id="refuerzoNota" placeholder="Ej: Saqué de mi bolsillo" style="width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:10px;">
       <div style="display:flex;gap:10px;margin-top:16px;">
-        <button id="btnConfirmarRefuerzo" onclick="confirmarRefuerzoCaja()" style="flex:1;background:#0f766e;color:#fff;font-weight:700;padding:12px;border-radius:8px;">Agregar</button>
+        <button id="btnConfirmarRefuerzo" onclick="confirmarRefuerzoCaja()" style="flex:1;background:#2B1A12;color:#fff;font-weight:700;padding:12px;border-radius:8px;">Agregar</button>
         <button onclick="cerrarModalRefuerzoCaja()" style="flex:1;background:#e5e7eb;color:#333;font-weight:700;padding:12px;border-radius:8px;">Cancelar</button>
       </div>
     </div>
