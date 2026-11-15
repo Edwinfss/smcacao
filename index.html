@@ -22,7 +22,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
-    <meta name="theme-color" content="#1B5E20">
+    <meta name="theme-color" content="#2B1A12">
+    <meta http-equiv="Cache-Control" content="no-cache">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
 function normalizarSeccionesSMCacao(){
@@ -1006,7 +1007,7 @@ async function manejarSubmitLoginGate(event){
     <aside id="sidebarDesk" class="sb no-print" aria-label="Menú principal">
       <div class="sb-head">
         <div class="sb-logo"><img data-logo="1" alt="SM CACAO"></div>
-        <div class="sb-brand"><b>SM CACAO</b><span>Compra · Venta · v60</span></div>
+        <div class="sb-brand"><b>SM CACAO</b><span>Compra · Venta · v61</span></div>
       </div>
 
       <nav class="sb-scroll">
@@ -6198,6 +6199,37 @@ async function guardarUsuarioAdmin(id){
     pintar();
   };
   document.addEventListener('DOMContentLoaded',()=>{ try{ window.smcacaoV41Sincronizar(); }catch(e){} });
+})();
+</script>
+
+<script>
+/* Auto-actualización: compara la versión instalada con la publicada en GitHub. */
+(function(){
+  const VERSION_APP = 61;
+  window.SMCACAO_VERSION = VERSION_APP;
+  let avisado = false;
+  async function revisar(alAbrir){
+    try{
+      const r = await fetch('./index.html?chk=' + Date.now(), { cache: 'no-store' });
+      if(!r.ok) return;
+      const t = await r.text();
+      const m = /VERSION_APP\s*=\s*(\d+)/.exec(t);
+      const nueva = m ? Number(m[1]) : 0;
+      if(nueva > VERSION_APP){
+        const escribiendo = document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && document.activeElement.value;
+        if(alAbrir && !escribiendo){ location.replace('./index.html?v=' + nueva); return; }
+        if(avisado) return; avisado = true;
+        const b = document.createElement('div');
+        b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:84px;z-index:9999;background:#2B1A12;color:#F6EBC8;border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:14px;max-width:520px;margin:0 auto';
+        b.innerHTML = '<span>✨ Hay una versión nueva de SM CACAO</span><button style="background:#D4AF37;color:#2B1A12;font-weight:800;border-radius:10px;padding:8px 12px">Actualizar</button>';
+        b.querySelector('button').onclick = () => location.replace('./index.html?v=' + nueva);
+        document.body.appendChild(b);
+      }
+    }catch(e){}
+  }
+  window.addEventListener('load', () => revisar(true));
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') revisar(false); });
+  setInterval(() => revisar(false), 10 * 60 * 1000);
 })();
 </script>
 </body>
