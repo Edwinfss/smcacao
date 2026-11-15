@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B5E20">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SM Notas">
+<title>SM Notas de compra</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  :root{
+    --cacao:#2B1A12;      /* texto: café del grano */
+    --hoja:#1B5E20;       /* acción principal: la hoja del logo */
+    --hoja-claro:#E7F2E8;
+    --oro:#D4AF37;        /* números de la báscula */
+    --papel:#FFFFFF;
+    --arena:#EDE5D8;      /* líneas y fondos suaves */
+    --gris:#6B5E55;
+    --rojo:#B3261E;
+    --ambar:#8A5A00;
+    --radio:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--papel);color:var(--cacao);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:17px;line-height:1.45;-webkit-text-size-adjust:100%}
+  body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+  .num{font-variant-numeric:tabular-nums}
+  main{max-width:520px;margin:0 auto;padding:16px 16px 120px}
+  h1{font-size:1.5rem;line-height:1.2;margin:0 0 4px}
+  h2{font-size:1.15rem;margin:22px 0 10px}
+  p{margin:0 0 10px}
+  .suave{color:var(--gris);font-size:.92rem}
+  .oculto{display:none!important}
+
+  /* Barra superior */
+  .barra{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .barra img{width:42px;height:42px;border-radius:50%;border:2px solid var(--oro)}
+  .barra .quien{flex:1;min-width:0}
+  .barra .quien b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .senal{font-size:.8rem;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .senal.on{background:var(--hoja-claro);color:var(--hoja)}
+  .senal.off{background:#FCE8E6;color:var(--rojo)}
+
+  /* Campos */
+  label{display:block;font-weight:600;font-size:.95rem;margin:14px 0 6px}
+  input,textarea,select{width:100%;font:inherit;color:inherit;border:2px solid #D6C7B0;border-radius:12px;padding:12px 14px;background:#fff}
+  input:focus,textarea:focus,select:focus,button:focus-visible{outline:3px solid var(--oro);outline-offset:1px;border-color:var(--cacao)}
+  textarea{min-height:70px;resize:vertical}
+
+  /* Botones */
+  button{font:inherit;cursor:pointer;border:0;border-radius:12px}
+  .btn{display:block;width:100%;min-height:56px;font-weight:700;font-size:1.05rem;padding:12px 16px}
+  .btn-hoja{background:var(--hoja);color:#fff}
+  .btn-borde{background:#fff;color:var(--cacao);border:2px solid var(--cacao)}
+  .btn-texto{background:none;color:var(--hoja);font-weight:700;padding:10px;min-height:44px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .fila{display:flex;gap:10px}
+  .fila>*{flex:1}
+
+  /* Selector segmentado (tipo, unidad, tara) */
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg button{flex:1;min-width:84px;min-height:50px;background:#fff;border:2px solid var(--arena);color:var(--cacao);font-weight:700;padding:8px}
+  .seg button[aria-pressed="true"]{background:var(--cacao);border-color:var(--cacao);color:#fff}
+
+  /* Tu plata */
+  .plata{border:2px solid var(--arena);border-radius:var(--radio);padding:16px;margin:4px 0 16px}
+  .plata .grande{font-size:2.6rem;font-weight:800;line-height:1.1}
+  .plata .detalle{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--gris);font-size:.9rem}
+
+  /* LA BÁSCULA: el elemento central de la app */
+  .bascula{background:var(--cacao);color:#fff;border-radius:18px;padding:16px 16px 14px;margin:18px 0 12px}
+  .bascula .lectura{display:block}
+  .bascula .neto{font-size:3rem;font-weight:800;color:var(--oro);line-height:1}
+  .bascula .neto small{font-size:1.1rem;color:#E9D9A0;margin-left:4px}
+  .bascula .pagar{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.18)}
+  .bascula .pagar span{font-size:1rem;color:#D8C9BD}
+  .bascula .pagar b{font-size:2.1rem;color:#fff}
+  .bascula .pie{margin-top:8px;font-size:.88rem;color:#D8C9BD;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .entrada-peso{display:flex;gap:8px;margin-top:14px}
+  .entrada-peso input{font-size:1.8rem;font-weight:800;text-align:center;border:0;border-radius:12px;padding:10px;color:var(--cacao)}
+  .entrada-peso button{flex:0 0 120px;background:var(--oro);color:var(--cacao);font-weight:800;font-size:1.05rem}
+
+  /* Lista de pesadas */
+  .pesadas{list-style:none;margin:0;padding:0}
+  .pesadas li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--arena)}
+  .pesadas .n{width:34px;color:var(--gris);font-weight:700}
+  .pesadas .calc{flex:1;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .pesadas .calc small{color:var(--gris);font-size:.95rem}
+  .pesadas .calc b{font-size:1.15rem;white-space:nowrap}
+  .pesadas button{background:none;color:var(--rojo);font-weight:700;padding:8px 10px;min-height:44px}
+
+  /* Lista de notas */
+  .nota{border-bottom:1px solid var(--arena);padding:12px 2px}
+  .nota .arriba{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+  .nota .monto{font-weight:800;font-size:1.1rem}
+  .estado{display:inline-block;font-size:.8rem;font-weight:700;padding:2px 9px;border-radius:999px;margin-top:4px}
+  .e-pendiente{background:#FFF3D6;color:var(--ambar)}
+  .e-aprobada{background:var(--hoja-claro);color:var(--hoja)}
+  .e-anulada{background:#FCE8E6;color:var(--rojo)}
+  .e-sinenviar{background:#EDE5D8;color:var(--cacao)}
+  .e-error{background:#FCE8E6;color:var(--rojo)}
+
+  /* Barra de acción fija abajo */
+  .accion{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--arena);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+  .accion .dentro{max-width:520px;margin:0 auto}
+
+  .aviso{border-radius:12px;padding:12px 14px;margin:10px 0;font-size:.95rem}
+  .aviso.rojo{background:#FCE8E6;color:var(--rojo)}
+  .aviso.verde{background:var(--hoja-claro);color:var(--hoja)}
+  .aviso.ambar{background:#FFF3D6;color:var(--ambar)}
+
+  #mensaje{position:fixed;left:16px;right:16px;bottom:calc(92px + env(safe-area-inset-bottom));max-width:488px;margin:0 auto;
+    background:var(--cacao);color:#fff;border-radius:12px;padding:12px 14px;font-weight:600;z-index:50;display:none}
+  #mensaje.error{background:var(--rojo)}
+
+  .centro{text-align:center}
+  .logo-grande{width:96px;height:96px;border-radius:50%;border:3px solid var(--oro);display:block;margin:28px auto 12px}
+  .resumen-final{border:2px solid var(--arena);border-radius:var(--radio);padding:16px;margin:14px 0}
+  .resumen-final .total{font-size:2.2rem;font-weight:800}
+
+  @media (prefers-reduced-motion:no-preference){
+    .bascula .neto{transition:transform .18s ease}
+    .bascula .neto.pulso{transform:scale(1.06)}
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- CARGANDO -->
+  <section id="p-cargando" class="centro">
+    <img class="logo-grande" src="icon-192.png" alt="SM CACAO">
+    <p class="suave">Abriendo...</p>
+  </section>
+
+  <!-- ENTRAR / CREAR CUENTA -->
+  <section id="p-login" class="oculto">
+    <img class="logo-grande" src="icon-192.png" alt="SM CACAO">
+    <h1 class="centro">Notas de compra</h1>
+    <p class="suave centro">Entra con la cuenta que te dio el dueño.</p>
+    <form id="form-login" autocomplete="on">
+      <div id="campo-nombre" class="oculto">
+        <label for="l-nombre">Tu nombre</label>
+        <input id="l-nombre" autocomplete="name" placeholder="Ej: Carlos Pérez">
+      </div>
+      <label for="l-correo">Correo</label>
+      <input id="l-correo" type="email" inputmode="email" autocomplete="username" required>
+      <label for="l-clave">Contraseña</label>
+      <input id="l-clave" type="password" autocomplete="current-password" required minlength="6">
+      <div id="login-aviso" class="aviso rojo oculto"></div>
+      <p style="margin-top:18px"><button class="btn btn-hoja" type="submit" id="btn-login">Entrar</button></p>
+    </form>
+    <p class="centro"><button class="btn-texto" type="button" id="btn-cambiar-modo">No tengo cuenta: crear una</button></p>
+  </section>
+
+  <!-- CUENTA SIN ACTIVAR / SIN PERMISO -->
+  <section id="p-espera" class="oculto centro">
+    <img class="logo-grande" src="icon-192.png" alt="SM CACAO">
+    <h1>Tu cuenta todavía no está activa</h1>
+    <p id="espera-texto" class="suave">Pídele al dueño que la active desde SM CACAO. Después toca "Revisar de nuevo".</p>
+    <p><button class="btn btn-hoja" type="button" id="btn-revisar">Revisar de nuevo</button></p>
+    <p><button class="btn-texto" type="button" data-salir>Salir</button></p>
+  </section>
+
+  <!-- INICIO -->
+  <section id="p-inicio" class="oculto">
+    <div class="barra">
+      <img src="icon-192.png" alt="">
+      <div class="quien"><span class="suave">Hola,</span><b id="i-nombre">—</b></div>
+      <span id="i-senal" class="senal on">Con señal</span>
+    </div>
+
+    <div class="plata">
+      <span class="suave">Tu plata para comprar</span>
+      <div class="grande num" id="i-saldo">$0.00</div>
+      <div class="detalle num"><span id="i-entregado">Te entregaron $0.00</span><span id="i-pagado">Pagaste $0.00</span></div>
+      <p class="suave" id="i-saldo-nota" style="margin:8px 0 0"></p>
+    </div>
+
+    <div id="i-aviso-cola" class="aviso ambar oculto"></div>
+
+    <h2>Tus notas</h2>
+    <div id="i-notas"><p class="suave">Todavía no tienes notas. Toca "Nueva nota" para empezar.</p></div>
+    <p class="centro"><button class="btn-texto" type="button" data-salir>Salir de la cuenta</button></p>
+  </section>
+
+  <!-- NUEVA NOTA -->
+  <section id="p-nota" class="oculto">
+    <div class="barra">
+      <button class="btn-texto" type="button" id="btn-volver" style="padding-left:0">Volver</button>
+      <span id="n-senal" class="senal on">Con señal</span>
+    </div>
+    <h1 id="n-titulo">Nueva nota</h1>
+    <div id="n-corrige" class="aviso ambar oculto"></div>
+
+    <label for="n-productor">Productor</label>
+    <input id="n-productor" list="lista-productores" autocomplete="off" placeholder="Nombre de quien vende">
+    <datalist id="lista-productores"></datalist>
+
+    <label>Tipo de cacao</label>
+    <div class="seg" id="n-tipo" role="group" aria-label="Tipo de cacao">
+      <button type="button" data-v="baba" aria-pressed="true">Baba</button>
+      <button type="button" data-v="semi_seco" aria-pressed="false">Semi seco</button>
+      <button type="button" data-v="seco" aria-pressed="false">Seco</button>
+    </div>
+
+    <label for="n-precio">Precio que pagas</label>
+    <input id="n-precio" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" class="num" style="font-size:1.4rem;font-weight:700">
+    <div class="seg" id="n-unidad" role="group" aria-label="Precio por" style="margin-top:8px">
+      <button type="button" data-v="tacho" aria-pressed="true">Por tacho</button>
+      <button type="button" data-v="lb" aria-pressed="false">Por libra</button>
+      <button type="button" data-v="qq" aria-pressed="false">Por quintal</button>
+    </div>
+    <p class="suave num" id="n-precio-lb" style="margin-top:6px"></p>
+    <div id="n-precio-dia" class="aviso ambar oculto" style="margin-top:4px"></div>
+
+    <label>Peso del tacho vacío (se descuenta)</label>
+    <div class="seg" id="n-tara" role="group" aria-label="Tara">
+      <button type="button" data-v="1.70" aria-pressed="true">1.70 lb</button>
+      <button type="button" data-v="2.00" aria-pressed="false">2.00 lb</button>
+      <button type="button" data-v="0" aria-pressed="false">Sin tara</button>
+      <button type="button" data-v="otro" aria-pressed="false">Otro</button>
+    </div>
+    <input id="n-tara-otro" class="oculto num" type="text" inputmode="decimal" autocomplete="off" placeholder="Tara en libras" style="margin-top:8px">
+
+    <div class="bascula" aria-live="polite">
+      <div class="lectura">
+        <div><span class="suave" style="color:#D8C9BD;font-size:.85rem">Neto</span><div class="neto num" id="b-neto">0.00<small>lb</small></div></div>
+        <div class="pagar"><span>A pagar</span><b class="num" id="b-total">$0.00</b></div>
+      </div>
+      <div class="pie num"><span id="b-cuenta">0 pesadas</span><span id="b-bruto">Bruto 0.00 lb</span><span id="b-qq">0.00 qq</span></div>
+      <div class="entrada-peso">
+        <input id="n-peso" type="text" inputmode="decimal" autocomplete="off" placeholder="Peso" aria-label="Peso de la pesada en libras" class="num">
+        <button type="button" id="btn-agregar">Agregar</button>
+      </div>
+    </div>
+    <div id="n-merma" class="oculto" aria-live="polite"></div>
+    <p class="suave" id="n-ayuda-peso">Pesa cada tacho con todo y tacho; la app descuenta el tacho vacío.</p>
+
+    <ul class="pesadas" id="n-pesadas"></ul>
+
+    <div id="n-cobro-caja">
+      <label>¿Cómo le pagas?</label>
+      <div class="seg" id="n-cobro" role="group" aria-label="Cómo se paga">
+        <button type="button" data-v="peso" aria-pressed="true">Por libras (peso)</button>
+        <button type="button" data-v="tacho" aria-pressed="false">Por tacho entero</button>
+      </div>
+      <p class="suave num" id="n-cobro-info" style="margin-top:6px"></p>
+    </div>
+
+    <label>¿Cuánto le pagaste?</label>
+    <div class="seg" id="n-pago" role="group" aria-label="Pago">
+      <button type="button" data-v="todo" aria-pressed="true">Todo</button>
+      <button type="button" data-v="parte" aria-pressed="false">Otra cantidad</button>
+    </div>
+    <input id="n-pagado" class="oculto num" type="text" inputmode="decimal" autocomplete="off" placeholder="Lo que pagaste" style="margin-top:8px">
+    <p class="suave num oculto" id="n-debe" style="margin-top:6px"></p>
+
+    <label for="n-obs">Observación (opcional)</label>
+    <textarea id="n-obs" placeholder="Ej: cacao un poco húmedo"></textarea>
+  </section>
+
+  <!-- NOTA GUARDADA -->
+  <section id="p-guardada" class="oculto">
+    <h1 id="g-titulo">Nota guardada</h1>
+    <div id="g-aviso" class="aviso verde"></div>
+    <div class="resumen-final">
+      <div class="suave" id="g-productor"></div>
+      <div class="total num" id="g-total"></div>
+      <div class="suave num" id="g-detalle"></div>
+    </div>
+    <p><button class="btn btn-hoja" type="button" id="btn-whatsapp">Enviar al productor por WhatsApp</button></p>
+    <p><button class="btn btn-borde" type="button" id="btn-otra">Nueva nota</button></p>
+    <p class="centro"><button class="btn-texto" type="button" id="btn-ir-inicio">Ir al inicio</button></p>
+  </section>
+</main>
+
+<!-- Botón fijo abajo (cambia según la pantalla) -->
+<div class="accion oculto" id="barra-accion"><div class="dentro">
+  <button class="btn btn-hoja" type="button" id="btn-accion">Nueva nota</button>
+</div></div>
+
+<div id="mensaje" role="status"></div>
+
+<script src="supabase.js"></script>
+<script>
+/* =====================================================================
+   SM Notas de compra
+   - Misma base de datos que SM CACAO (Supabase).
+   - Funciona sin internet: las notas se guardan en el celular y se envían
+     solas cuando vuelve la señal (cada nota lleva un código único para que
+     nunca se duplique).
+   - El servidor recalcula libras y totales; el celular solo los muestra.
+   ===================================================================== */
+const SUPABASE_URL = 'https://cdtzobqjdpjqgpxfxaof.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_0zCNwxEcvDiKW2gtUvZ-ig_Ky3E_M32';
+const ROLES_PERMITIDOS = ['campo', 'comprador', 'administrador', 'cajero'];
+const K = { solicitudes: 'smnotas_eliminar_v1', ocultas: 'smnotas_ocultas_v1', precios: 'smnotas_precios_v1', cola: 'smnotas_cola_v1', perfil: 'smnotas_perfil_v1', saldo: 'smnotas_saldo_v1', notas: 'smnotas_notas_v1',
+            borrador: 'smnotas_borrador_v1', prefs: 'smnotas_prefs_v1' };
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, storageKey: 'smnotas-auth' }
+});
+
+/* ---------- utilidades ---------- */
+const $ = id => document.getElementById(id);
+const r2 = x => Math.round((Number(x) + Number.EPSILON) * 100) / 100;
+const dinero = x => '$' + r2(x).toFixed(2);
+const libras = x => r2(x).toFixed(2);
+const leer = (k, def) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } };
+const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nuevoId = () => (crypto.randomUUID ? crypto.randomUUID()
+  : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); }));
+const hoyLocal = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+const fechaBonita = f => { const [a, m, d] = String(f).slice(0, 10).split('-'); return `${d}/${m}/${a}`; };
+const NOMBRE_TIPO = { baba: 'Cacao en baba', semi_seco: 'Cacao semi seco', seco: 'Cacao seco' };
+const NOMBRE_UNIDAD = { tacho: 'por tacho de 50 lb', lb: 'por libra', qq: 'por quintal' };
+
+let msgTimer = null;
+function mensaje(texto, error) {
+  const m = $('mensaje'); m.textContent = texto; m.className = error ? 'error' : ''; m.style.display = 'block';
+  clearTimeout(msgTimer); msgTimer = setTimeout(() => { m.style.display = 'none'; }, error ? 6000 : 3500);
+}
+
+/* ---------- cálculos (los mismos que hace el servidor) ---------- */
+function precioPorLibra(precio, unidad) {
+  const p = Number(precio) || 0;
+  return unidad === 'tacho' ? p / 50 : unidad === 'qq' ? p / 100 : p;
+}
+function calcular(n) {
+  const bruto = n.pesadas.reduce((s, x) => s + Number(x.bruto), 0);
+  const tara = n.pesadas.reduce((s, x) => s + Number(x.tara || 0), 0);
+  const neto = r2(bruto - tara);
+  const nominal = precioPorLibra(n.precio, n.unidad);       // el precio que escribió (pasado a libra)
+  let plb = nominal, tachoEntero = false, precioTacho = 0;
+  // "Por tacho entero": cada tacho se paga completo aunque pese menos (ej. 47 lb).
+  // El total tiene que dar EXACTO (7 × $30 = $210.00, no $209.98). Para eso se busca un precio por libra con
+  // 6 decimales que, multiplicado por las libras y redondeado a centavos como lo hace el servidor, dé ese total.
+  let total, precioQq = 0;
+  if (n.cobro === 'tacho' && n.tipo !== 'seco' && n.pesadas.length && neto > 0 && nominal > 0) {
+    tachoEntero = true;
+    precioTacho = r2(nominal * 50);
+    const objetivo = Math.round(n.pesadas.length * precioTacho * 100);      // en centavos
+    const netoC = Math.round(neto * 100);                                    // libras × 100
+    const centavos = p6 => Math.round(netoC * p6 / 1e6);                     // total en centavos para un precio (lb × 1.000.000)
+    let p6 = Math.round(objetivo * 1e6 / netoC);
+    for (let k = 0; k < 200 && centavos(p6) !== objetivo; k++) p6 += centavos(p6) < objetivo ? 1 : -1;
+    plb = p6 / 1e6; precioQq = p6 / 1e4;                                     // se envía "por quintal" (4 decimales = 6 por libra)
+    total = centavos(p6) / 100;
+  } else total = r2(neto * plb);
+  return { bruto: r2(bruto), tara: r2(tara), neto, precioLb: plb, nominalLb: nominal, total, qq: r2(neto / 100),
+           tachoEntero, precioTacho, precioQq, tachos: n.pesadas.length, totalPorPeso: r2(neto * nominal) };
+}
+
+/* ---------- pantallas ---------- */
+const PANTALLAS = ['p-cargando', 'p-login', 'p-espera', 'p-inicio', 'p-nota', 'p-guardada'];
+function mostrar(id) {
+  PANTALLAS.forEach(p => $(p).classList.toggle('oculto', p !== id));
+  const barra = $('barra-accion'), btn = $('btn-accion');
+  if (id === 'p-inicio') { barra.classList.remove('oculto'); btn.textContent = 'Nueva nota'; btn.disabled = false; btn.onclick = abrirNuevaNota; }
+  else if (id === 'p-nota') { barra.classList.remove('oculto'); btn.textContent = 'Guardar nota'; btn.onclick = guardarNota; actualizarNota(); }
+  else barra.classList.add('oculto');
+  window.scrollTo(0, 0);
+}
+
+/* ---------- señal ---------- */
+function pintarSenal() {
+  const on = navigator.onLine;
+  ['i-senal', 'n-senal'].forEach(id => { const e = $(id); if (!e) return; e.textContent = on ? 'Con señal' : 'Sin señal'; e.className = 'senal ' + (on ? 'on' : 'off'); });
+}
+window.addEventListener('online', () => { pintarSenal(); sincronizar(); });
+window.addEventListener('offline', pintarSenal);
+
+/* ---------- sesión y perfil ---------- */
+let perfil = leer(K.perfil, null);
+let modoCrear = false;
+
+async function iniciar() {
+  pintarSenal();
+  const { data } = await sb.auth.getSession();
+  if (!data.session) { mostrar('p-login'); return; }
+  await cargarPerfil(data.session.user);
+}
+
+async function cargarPerfil(usuario) {
+  if (navigator.onLine) {
+    const { data, error } = await sb.from('perfiles').select('nombre,rol,activo,email,empresa_id').eq('id', usuario.id).maybeSingle();
+    if (!error && data) { perfil = { id: usuario.id, ...data }; guardar(K.perfil, perfil); }
+  }
+  if (!perfil || perfil.id !== usuario.id) { if (!navigator.onLine) { mostrar('p-login'); mensaje('Necesitas señal para entrar la primera vez.', true); return; } }
+  if (!perfil || !perfil.activo || !ROLES_PERMITIDOS.includes(perfil.rol)) {
+    $('espera-texto').textContent = (perfil && perfil.activo)
+      ? 'Tu cuenta está activa, pero no tiene permiso para hacer notas. Pídele al dueño que te asigne el rol "Trabajador de campo".'
+      : 'Pídele al dueño que la active desde SM CACAO. Después toca "Revisar de nuevo".';
+    mostrar('p-espera'); return;
+  }
+  $('i-nombre').textContent = perfil.nombre || perfil.email || 'trabajador';
+  mostrar('p-inicio');
+  pintarInicio();
+  sincronizar();
+}
+
+$('form-login').addEventListener('submit', async e => {
+  e.preventDefault();
+  const correo = $('l-correo').value.trim(), clave = $('l-clave').value, nombre = $('l-nombre').value.trim();
+  const aviso = $('login-aviso'); aviso.classList.add('oculto');
+  if (!navigator.onLine) { aviso.textContent = 'Necesitas señal para entrar.'; aviso.classList.remove('oculto'); return; }
+  const btn = $('btn-login'); btn.disabled = true; btn.textContent = modoCrear ? 'Creando...' : 'Entrando...';
+  try {
+    if (modoCrear) {
+      if (nombre.length < 3) throw new Error('Escribe tu nombre completo.');
+      const { error } = await sb.auth.signUp({ email: correo, password: clave, options: { data: { name: nombre, app: 'smnotas' } } });
+      if (error) throw error;
+      const { data: s } = await sb.auth.getSession();
+      if (s.session) await cargarPerfil(s.session.user);
+      else { aviso.className = 'aviso verde'; aviso.textContent = 'Cuenta creada. Revisa tu correo si te pide confirmarla, y pídele al dueño que la active.'; aviso.classList.remove('oculto'); }
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email: correo, password: clave });
+      if (error) throw new Error(error.message.includes('Invalid login') ? 'Correo o contraseña incorrectos.' : error.message);
+      await cargarPerfil(data.user);
+    }
+  } catch (err) {
+    aviso.className = 'aviso rojo'; aviso.textContent = err.message || String(err); aviso.classList.remove('oculto');
+  } finally { btn.disabled = false; btn.textContent = modoCrear ? 'Crear cuenta' : 'Entrar'; }
+});
+$('btn-cambiar-modo').addEventListener('click', () => {
+  modoCrear = !modoCrear;
+  $('campo-nombre').classList.toggle('oculto', !modoCrear);
+  $('btn-login').textContent = modoCrear ? 'Crear cuenta' : 'Entrar';
+  $('btn-cambiar-modo').textContent = modoCrear ? 'Ya tengo cuenta: entrar' : 'No tengo cuenta: crear una';
+  $('l-clave').autocomplete = modoCrear ? 'new-password' : 'current-password';
+});
+$('btn-revisar').addEventListener('click', async () => { const { data } = await sb.auth.getSession(); if (data.session) cargarPerfil(data.session.user); else mostrar('p-login'); });
+document.querySelectorAll('[data-salir]').forEach(b => b.addEventListener('click', async () => {
+  const cola = leer(K.cola, []);
+  if (cola.length && !confirm(`Tienes ${cola.length} nota(s) sin enviar. Si sales ahora se quedan en este celular hasta que vuelvas a entrar. ¿Salir igual?`)) return;
+  await sb.auth.signOut(); perfil = null; localStorage.removeItem(K.perfil); mostrar('p-login');
+}));
+
+/* ---------- inicio: tu plata y tus notas ---------- */
+// Una corrección lleva en la observación "[corrige:<id de la nota vieja>]".
+const REF = /\[corrige:([0-9a-f-]{36})\]\s*/i;
+const refCorrige = obs => ((obs || '').match(REF) || [])[1] || null;
+const sinRef = obs => (obs || '').replace(REF, '').trim();
+function notasReemplazadas() {
+  const refs = new Set();
+  leer(K.cola, []).forEach(c => { const r = refCorrige(c.payload.observacion); if (r) refs.add(r); });
+  leer(K.notas, []).forEach(n => { if (n.estado !== 'anulada') { const r = refCorrige(n.observacion); if (r) refs.add(r); } });
+  return refs;
+}
+function pintarInicio() {
+  const cola = leer(K.cola, []);
+  const s = leer(K.saldo, { entregado: 0, pagado_notas: 0, saldo: 0 });
+  const reemplazadas = notasReemplazadas();
+  const eliminadas = new Set(leer(K.solicitudes, []).map(x => x.nota_uuid));
+  // lo pagado en una nota que ya corregiste no se cuenta dos veces (el dueño anula la vieja al aprobar)
+  const doble = leer(K.notas, []).filter(n => n.estado === 'pendiente' && (reemplazadas.has(n.client_uuid) || eliminadas.has(n.client_uuid))).reduce((t, n) => t + Number(n.pagado || 0), 0);
+  const sinEnviar = cola.filter(c => c.estado !== 'error').reduce((t, c) => t + Number(c.vista.pagado || 0), 0) - doble;
+  $('i-saldo').textContent = dinero(Number(s.saldo) - sinEnviar);
+  // Lo que te devolviste al dueño se resta: si devolviste todo, queda en $0 y solo sube cuando te vuelvan a dar plata.
+  const entregadoNeto = Math.max(0, Number(s.entregado || 0) - Number(s.devuelto || 0));
+  $('i-entregado').textContent = 'Te entregaron ' + dinero(entregadoNeto);
+  $('i-pagado').textContent = 'Pagaste ' + dinero(Number(s.pagado_notas) + sinEnviar);
+  $('i-saldo-nota').textContent = sinEnviar ? 'Ya descuenta las notas que todavía no se envían.' : '';
+
+  const avisoCola = $('i-aviso-cola');
+  const conError = cola.filter(c => c.estado === 'error').length;
+  if (cola.length) {
+    avisoCola.classList.remove('oculto');
+    avisoCola.textContent = conError
+      ? `Hay ${conError} nota(s) que el sistema rechazó. Revisa el motivo abajo.`
+      : `${cola.length} nota(s) guardada(s) en este celular. Se envían solas cuando haya señal.`;
+  } else avisoCola.classList.add('oculto');
+
+  const servidor = leer(K.notas, []);
+  const filas = [
+    ...cola.map(c => ({ local: true, ...c.vista, estado: c.estado === 'error' ? 'error' : 'sinenviar', error: c.error, client_uuid: c.client_uuid })),
+    ...servidor.filter(n => !leer(K.ocultas, []).includes(n.id))
+  ].map(n => n.estado !== 'pendiente' ? n : eliminadas.has(n.client_uuid) ? { ...n, estado: 'eliminada' } : reemplazadas.has(n.client_uuid) ? { ...n, estado: 'corregida' } : n);
+  const cont = $('i-notas');
+  if (!filas.length) { cont.innerHTML = '<p class="suave">Todavía no tienes notas. Toca "Nueva nota" para empezar.</p>'; return; }
+  const ETQ = { pendiente: ['Por aprobar', 'e-pendiente'], aprobada: ['Aprobada', 'e-aprobada'], anulada: ['Anulada', 'e-anulada'],
+                sinenviar: ['Sin enviar', 'e-sinenviar'], error: ['Rechazada', 'e-error'], corregida: ['Corregida', 'e-anulada'], eliminada: ['Eliminada', 'e-anulada'] };
+  cont.innerHTML = filas.slice(0, 40).map(n => {
+    const [txt, cls] = ETQ[n.estado] || ['', ''];
+    return `<div class="nota">
+      <div class="arriba"><b>${n.numero ? 'N° ' + n.numero + ' ' : ''}${esc(n.proveedor_nombre)}</b><span class="monto num">${dinero(n.total)}</span></div>
+      <div class="suave num">${fechaBonita(n.fecha)}, ${esc((NOMBRE_TIPO[n.tipo] || n.tipo).toLowerCase())}, ${libras(n.libras_netas)} lb</div>
+      <span class="estado ${cls}">${txt}</span>
+      ${n.estado === 'corregida' ? `<div class="suave">La reemplazaste con una corrección. El dueño la anula al aprobar la nueva.</div>` : ''}
+      ${n.estado === 'eliminada' ? `<div class="suave">La eliminaste. Ya no cuenta en tu plata; al dueño le aparece anulada.</div>` : ''}
+      ${['pendiente', 'sinenviar', 'error'].includes(n.estado) ? `<div style="display:flex;gap:18px"><button class="btn-texto" style="padding-left:0" onclick="corregirNota('${n.client_uuid}')">✏️ Corregir</button><button class="btn-texto" style="padding-left:0;color:var(--rojo)" onclick="eliminarNota('${n.client_uuid}')">🗑️ Eliminar</button></div>` : ''}
+      ${n.estado === 'anulada' && n.motivo_anulacion ? `<div class="suave">Motivo: ${esc(n.motivo_anulacion)}</div>` : ''}
+      ${n.estado === 'anulada' && n.id ? `<button class="btn-texto" style="padding-left:0;color:var(--rojo)" onclick="quitarAnulada('${n.id}', ${n.numero || 0})">Eliminar del historial</button>` : ''}
+      ${n.estado === 'error' ? `<div class="suave" style="color:var(--rojo)">${esc(n.error)}</div>
+        <button class="btn-texto" style="padding-left:0" onclick="borrarDeCola('${n.client_uuid}')">Borrar esta nota del celular</button>` : ''}
+    </div>`;
+  }).join('');
+}
+// Eliminar una nota que el dueño todavía no aprueba.
+// - Sin enviar: se borra del celular.
+// - Ya enviada: se manda un aviso al sistema; SM CACAO la anula sola y ya no cuenta en tu plata.
+window.eliminarNota = function (uuid) {
+  const cola = leer(K.cola, []);
+  const enCola = cola.find(c => c.client_uuid === uuid);
+  if (enCola) {
+    if (!confirm(`¿Eliminar la nota de ${enCola.vista.proveedor_nombre} (${dinero(enCola.vista.total)})? Todavía no se envió, se borra del celular.`)) return;
+    guardar(K.cola, cola.filter(c => c.client_uuid !== uuid)); pintarInicio(); mensaje('Nota eliminada.'); return;
+  }
+  const n = leer(K.notas, []).find(x => x.client_uuid === uuid);
+  if (!n || n.estado !== 'pendiente') { mensaje('Esa nota ya fue revisada por el dueño; no se puede eliminar.', true); return; }
+  const motivo = prompt(`¿Por qué eliminas la nota N° ${n.numero} de ${n.proveedor_nombre} (${dinero(n.total)})?\nEj: me equivoqué, nota repetida`, 'Me equivoqué');
+  if (motivo === null) return;
+  const s = leer(K.solicitudes, []);
+  if (!s.some(x => x.nota_uuid === uuid)) s.push({ nota_uuid: uuid, numero: n.numero, motivo: (motivo.trim() || 'Me equivoqué').slice(0, 200), enviada: false, en: new Date().toISOString() });
+  guardar(K.solicitudes, s); pintarInicio(); mensaje('Nota eliminada. Se avisa al sistema' + (navigator.onLine ? '.' : ' cuando haya señal.'));
+  sincronizar();
+};
+async function enviarSolicitudes() {
+  const s = leer(K.solicitudes, []);
+  for (const x of s.filter(y => !y.enviada)) {
+    if (!perfil.empresa_id) break;
+    const { error } = await sb.from('negocio_estado').insert({
+      empresa_id: perfil.empresa_id, user_id: perfil.id, actualizado_por: perfil.id, actualizado_en: new Date().toISOString(),
+      negocio_codigo: 'ELIMINAR-NOTA-' + x.nota_uuid,
+      estado: { tipo: 'eliminar_nota', nota_uuid: x.nota_uuid, numero: x.numero, motivo: x.motivo, quien: perfil.id }
+    });
+    if (!error || error.code === '23505') x.enviada = true;
+    else if (/fetch|network|Failed|timeout/i.test(error.message || '')) break;
+    else { x.enviada = true; x.error = error.message; }
+  }
+  // cuando el dueño ya la anuló (o aprobó), la solicitud se borra del celular
+  const notas = leer(K.notas, []);
+  guardar(K.solicitudes, s.filter(x => { const n = notas.find(m => m.client_uuid === x.nota_uuid); return !x.enviada || !n || n.estado === 'pendiente'; }));
+}
+
+// Las notas anuladas no cuentan para nada: se pueden quitar de la lista.
+window.quitarAnulada = function (id, numero) {
+  if (!confirm(`¿Eliminar la nota${numero ? ' N° ' + numero : ''} anulada de tu historial?`)) return;
+  const o = leer(K.ocultas, []); if (!o.includes(id)) o.push(id); guardar(K.ocultas, o.slice(-500)); pintarInicio();
+};
+window.borrarDeCola = function (id) {
+  if (!confirm('¿Borrar esta nota rechazada del celular? Tendrás que hacerla de nuevo.')) return;
+  guardar(K.cola, leer(K.cola, []).filter(c => c.client_uuid !== id)); pintarInicio();
+};
+
+async function refrescarDesdeServidor() {
+  if (!navigator.onLine || !perfil) return;
+  try {
+    const [r, n] = await Promise.all([
+      sb.rpc('resumen_campo'),
+      sb.from('notas_compra').select('id,client_uuid,precio_ingresado,unidad_precio,pesadas,observacion,numero,proveedor_nombre,tipo,libras_netas,total,pagado,fecha,estado,motivo_anulacion,created_at')
+        .eq('comprador_id', perfil.id).order('created_at', { ascending: false }).limit(50)
+    ]);
+    if (!r.error) {
+      const mio = (r.data || []).find(x => x.usuario_id === perfil.id) || { entregado: 0, devuelto: 0, pagado_notas: 0, saldo: 0 };
+      guardar(K.saldo, mio);
+    }
+    if (!n.error) guardar(K.notas, n.data || []);
+    try {
+      // precio del día que pone el dueño: primero en la tabla (si existe), si no en los datos del negocio
+      const pr = await sb.from('precios_campo').select('*').maybeSingle();
+      if (!pr.error && pr.data) guardar(K.precios, pr.data);
+      else {
+        const ne = await sb.from('negocio_estado').select('pc:estado->precios_campo').eq('negocio_codigo', 'SM-CACAO').maybeSingle();
+        if (!ne.error && ne.data && ne.data.pc) guardar(K.precios, ne.data.pc);
+      }
+    } catch (e) {}
+    const productores = [...new Set((n.data || []).map(x => x.proveedor_nombre))];
+    const prefs = leer(K.prefs, {}); prefs.productores = [...new Set([...(prefs.productores || []), ...productores])].slice(0, 200); guardar(K.prefs, prefs);
+  } catch (e) { /* sin señal: se queda con lo guardado */ }
+  pintarInicio();
+}
+
+/* ---------- envío de notas (cola) ---------- */
+let sincronizando = false;
+async function sincronizar() {
+  if (sincronizando || !navigator.onLine || !perfil) { pintarInicio(); return; }
+  sincronizando = true;
+  try {
+    const { data: s } = await sb.auth.getSession();
+    if (!s.session) return;
+    let cola = leer(K.cola, []);
+    for (const item of cola.filter(c => c.estado !== 'error')) {
+      const { data, error } = await sb.from('notas_compra').insert(item.payload).select('numero,total,libras_netas').single();
+      cola = leer(K.cola, []);
+      if (!error || error.code === '23505') {            // 23505: ya estaba guardada (no se duplica)
+        cola = cola.filter(c => c.client_uuid !== item.client_uuid);
+        if (data && ultimaGuardada && ultimaGuardada.client_uuid === item.client_uuid) { ultimaGuardada.numero = data.numero; }
+      } else if (/fetch|network|Failed|timeout/i.test(error.message || '')) {
+        break;                                            // se cayó la señal: se intenta luego
+      } else {
+        const it = cola.find(c => c.client_uuid === item.client_uuid);
+        if (it) { it.estado = 'error'; it.error = error.message; }
+      }
+      guardar(K.cola, cola);
+    }
+    await enviarSolicitudes();
+  } catch (e) { /* sin señal */ }
+  finally { sincronizando = false; }
+  await refrescarDesdeServidor();
+}
+setInterval(sincronizar, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { pintarSenal(); sincronizar(); } });
+
+/* ---------- precio del día (lo pone el dueño en SM CACAO) ---------- */
+function config() {
+  const p = leer(K.precios, {}) || {};
+  return { tachoNormal: Number(p.tacho_normal) || 48.5, umbral: Number(p.umbral_merma) || 45, conversion: Number(p.conversion_baba) || 3.64, precios: p };
+}
+function precioDiaLb(tipo) {
+  const p = config().precios;
+  const v = Number(tipo === 'baba' ? p.baba_lb : tipo === 'semi_seco' ? p.semi_seco_lb : p.seco_lb);
+  return v > 0 ? v : 0;
+}
+function enUnidad(lb, unidad) {
+  const v = unidad === 'tacho' ? lb * 50 : unidad === 'qq' ? lb * 100 : lb;
+  return String(unidad === 'lb' ? Math.round(v * 10000) / 10000 : Math.round(v * 100) / 100);
+}
+function ponerPrecioDelDia() {
+  const lb = precioDiaLb(nota.tipo);
+  if (lb > 0) { nota.precio = enUnidad(lb, nota.unidad); nota.precioAuto = true; }
+}
+
+/* ---------- nueva nota ---------- */
+let nota = null;
+let ultimaGuardada = null;
+
+function notaVacia() {
+  const prefs = leer(K.prefs, {});
+  const tipo = prefs.tipo || 'baba';
+  return { tipo, precio: (prefs.precios || {})[tipo] || '', unidad: (prefs.unidades || {})[tipo] || (tipo === 'baba' ? 'tacho' : 'qq'),
+           tara: tipo === 'seco' ? '0' : ((prefs.taras || {})[tipo] || '1.70'), taraOtro: '', pesadas: [], cobro: prefs.cobro || 'peso', pago: 'todo', pagado: '', productor: '', obs: '' };
+}
+function notaNueva() { nota = notaVacia(); ponerPrecioDelDia(); return nota; }
+// (una corrección a medias también queda como borrador y se puede seguir)
+// Corregir una nota que todavía no aprueba el dueño.
+// - Si sigue en el celular (sin enviar): se reemplaza ahí mismo.
+// - Si ya se envió: se manda una nota nueva que dice a cuál corrige; al aprobarla, el dueño anula la vieja sola.
+window.corregirNota = function (uuid) {
+  const enCola = leer(K.cola, []).find(c => c.client_uuid === uuid);
+  const srv = leer(K.notas, []).find(n => n.client_uuid === uuid);
+  const d = enCola ? { ...enCola.payload, total: enCola.vista.total, numero: null } : srv;
+  if (!d) { mensaje('No encontré esa nota. Toca de nuevo cuando haya señal.', true); return; }
+  if (!enCola && d.estado !== 'pendiente') { mensaje('Esa nota ya fue revisada por el dueño; no se puede corregir.', true); return; }
+  const obs = sinRef(d.observacion);
+  const te = (obs.match(/Pagado por tacho entero: (\d+) × \$(\d+(?:[.,]\d+)?)/) || []);
+  const pagoTodo = d.pagado === null || d.pagado === undefined || Math.abs(Number(d.pagado) - Number(d.total)) < 0.005;
+  nota = {
+    tipo: d.tipo, productor: d.proveedor_nombre || '',
+    precio: te[2] ? te[2].replace(',', '') : String(Number(d.precio_ingresado)),
+    unidad: te[2] ? 'tacho' : d.unidad_precio, precioAuto: false,
+    cobro: te[2] ? 'tacho' : 'peso',
+    tara: d.tipo === 'seco' ? '0' : String(((d.pesadas || [])[0] || {}).tara ?? '1.70'), taraOtro: '',
+    pesadas: (d.pesadas || []).map(p => ({ bruto: Number(p.bruto), tara: Number(p.tara || 0) })),
+    pago: pagoTodo ? 'todo' : 'parte', pagado: pagoTodo ? '' : String(Number(d.pagado)),
+    obs: obs.replace(/Pagado por tacho entero: \d+ × \$\d+(?:[.,]\d+)?\.?\s*/, '').trim(),
+    // si la que corriges todavía está en el celular y ya era una corrección, se conserva a cuál corregía
+    corrige: { uuid, numero: d.numero || null, enCola: !!enCola, refPrevia: enCola ? refCorrige(enCola.payload.observacion) : null }
+  };
+  const t = Number(nota.tara) || 0;   // tara para los pesos que agregue; las pesadas ya hechas guardan la suya
+  nota.tara = t === 0 ? '0' : Math.abs(t - 1.7) < 0.001 ? '1.70' : Math.abs(t - 2) < 0.001 ? '2.00' : 'otro';
+  if (nota.tara === 'otro') nota.taraOtro = String(t);
+  pintarFormulario(); mostrar('p-nota');
+};
+function abrirNuevaNota() {
+  const b = leer(K.borrador, null);
+  nota = (b && b.pesadas && b.pesadas.length && confirm('Tienes una nota sin terminar. ¿Seguir con esa?')) ? b : notaNueva();
+  pintarFormulario(); mostrar('p-nota');
+}
+function pintarFormulario() {
+  const corr = nota.corrige;
+  $('n-titulo').textContent = corr ? 'Corregir nota' + (corr.numero ? ' N° ' + corr.numero : '') : 'Nueva nota';
+  $('n-corrige').classList.toggle('oculto', !corr);
+  if (corr) $('n-corrige').textContent = corr.enCola
+    ? 'Cambia lo que esté mal y guarda. Esta nota todavía no se envió: se reemplaza.'
+    : 'Cambia lo que esté mal y guarda. Se envía la nota corregida y la anterior se anula cuando el dueño apruebe esta.';
+  $('n-productor').value = nota.productor; $('n-precio').value = nota.precio; $('n-obs').value = nota.obs;
+  $('n-tara-otro').value = nota.taraOtro; $('n-pagado').value = nota.pagado;
+  if (!nota.cobro) nota.cobro = 'peso';
+  marcarSeg('n-tipo', nota.tipo); marcarSeg('n-unidad', nota.unidad); marcarSeg('n-tara', nota.tara); marcarSeg('n-pago', nota.pago); marcarSeg('n-cobro', nota.cobro);
+  $('n-cobro-caja').classList.toggle('oculto', nota.tipo === 'seco');
+  $('n-tara-otro').classList.toggle('oculto', nota.tara !== 'otro');
+  $('n-pagado').classList.toggle('oculto', nota.pago !== 'parte');
+  $('n-ayuda-peso').textContent = nota.tipo === 'seco'
+    ? 'Pesa cada saco. Un quintal son 100 lb de cacao seco.'
+    : 'Pesa cada tacho con todo y tacho; la app descuenta el tacho vacío.';
+  const prefs = leer(K.prefs, {});
+  $('lista-productores').innerHTML = (prefs.productores || []).map(p => `<option value="${esc(p)}">`).join('');
+  actualizarNota();
+}
+function marcarSeg(id, valor) { $(id).querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === valor))); }
+function taraActual() { return nota.tara === 'otro' ? (Number(nota.taraOtro) || 0) : Number(nota.tara) || 0; }
+
+['n-tipo', 'n-unidad', 'n-tara', 'n-pago', 'n-cobro'].forEach(id => $(id).addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const v = b.dataset.v;
+  if (id === 'n-tipo' && v !== nota.tipo) {
+    const prefs = leer(K.prefs, {});
+    nota.tipo = v;
+    nota.unidad = (prefs.unidades || {})[v] || (v === 'baba' ? 'tacho' : 'qq');
+    nota.precio = (prefs.precios || {})[v] || '';
+    nota.tara = v === 'seco' ? '0' : ((prefs.taras || {})[v] || '1.70');
+    ponerPrecioDelDia();
+    pintarFormulario(); return;
+  }
+  if (id === 'n-unidad') {
+    // si el precio es el del día, se convierte solo a la nueva unidad
+    const lbAntes = precioPorLibra(nota.precio, nota.unidad);
+    nota.unidad = v;
+    if (nota.precioAuto || (precioDiaLb(nota.tipo) > 0 && Math.abs(lbAntes - precioDiaLb(nota.tipo)) < 0.00005)) { ponerPrecioDelDia(); $('n-precio').value = nota.precio; }
+  }
+  if (id === 'n-tara') { nota.tara = v; $('n-tara-otro').classList.toggle('oculto', v !== 'otro'); if (v === 'otro') $('n-tara-otro').focus(); }
+  if (id === 'n-cobro') nota.cobro = v;
+  if (id === 'n-pago') { nota.pago = v; $('n-pagado').classList.toggle('oculto', v !== 'parte'); if (v === 'parte') $('n-pagado').focus(); }
+  marcarSeg(id, v); actualizarNota();
+}));
+[['n-productor', 'productor'], ['n-precio', 'precio'], ['n-tara-otro', 'taraOtro'], ['n-pagado', 'pagado'], ['n-obs', 'obs']]
+  .forEach(([id, campo]) => $(id).addEventListener('input', () => {
+    let v = $(id).value;
+    if (['precio', 'taraOtro', 'pagado'].includes(campo)) { v = limpiarNumero(v); if (v !== $(id).value) $(id).value = v; }
+    nota[campo] = v; if (campo === 'precio') nota.precioAuto = false; actualizarNota();
+  }));
+
+// Acepta "45,5" o "45.5" (el teclado del celular en español pone coma)
+function limpiarNumero(v) {
+  v = String(v || '').replace(',', '.').replace(/[^0-9.]/g, '');
+  const i = v.indexOf('.'); if (i >= 0) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, '');
+  return v;
+}
+function agregarPesada() {
+  const peso = Number(limpiarNumero($('n-peso').value));
+  const tara = taraActual();
+  if (!(peso > 0)) { mensaje('Escribe el peso.', true); $('n-peso').focus(); return; }
+  if (tara >= peso) { mensaje(`El peso (${libras(peso)} lb) tiene que ser mayor que el tacho vacío (${libras(tara)} lb).`, true); return; }
+  const limite = nota.tipo === 'seco' ? 160 : 90;
+  if (peso > limite && !confirm(`${libras(peso)} lb es mucho para un ${nota.tipo === 'seco' ? 'saco' : 'tacho'}. ¿Está bien escrito?`)) return;
+  nota.pesadas.push({ bruto: r2(peso), tara: r2(tara) });
+  $('n-peso').value = ''; $('n-peso').focus();
+  const neto = $('b-neto'); neto.classList.add('pulso'); setTimeout(() => neto.classList.remove('pulso'), 180);
+  actualizarNota();
+}
+$('btn-agregar').addEventListener('click', agregarPesada);
+$('n-peso').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); agregarPesada(); } });
+window.quitarPesada = function (i) {
+  if (!confirm(`¿Quitar la pesada ${i + 1}?`)) return;
+  nota.pesadas.splice(i, 1); actualizarNota();
+};
+
+function actualizarNota() {
+  if (!nota) return;
+  const c = calcular(nota);
+  $('b-neto').innerHTML = libras(c.neto) + '<small>lb</small>';
+  $('b-total').textContent = dinero(c.total);
+  $('b-cuenta').textContent = nota.pesadas.length + (nota.pesadas.length === 1 ? ' pesada' : ' pesadas');
+  $('b-bruto').textContent = 'Bruto ' + libras(c.bruto) + ' lb';
+  $('b-qq').textContent = libras(c.qq) + ' qq';
+  $('n-precio-lb').textContent = Number(nota.precio) > 0
+    ? `Son $${c.precioLb.toFixed(4)} por libra.` + (nota.unidad !== 'tacho' && nota.tipo !== 'seco' ? ` Un tacho de 50 lb: ${dinero(c.precioLb * 50)}.` : '')
+    : '';
+  $('n-pesadas').innerHTML = nota.pesadas.map((p, i) => ({ p, i })).reverse().map(({ p, i }) =>
+    `<li><span class="n num">${i + 1}</span>
+      <span class="calc num"><small>${libras(p.bruto)}${p.tara ? ' − ' + libras(p.tara) : ''}</small><b>${libras(p.bruto - p.tara)} lb</b></span>
+      <button type="button" onclick="quitarPesada(${i})" aria-label="Quitar pesada ${i + 1}">Quitar</button></li>`).join('');
+  pintarPrecioDia(c);
+  pintarMerma(c);
+  const info = $('n-cobro-info');
+  if (c.tachoEntero) info.innerHTML = `${c.tachos} tacho${c.tachos > 1 ? 's' : ''} × ${dinero(c.precioTacho)} = <b>${dinero(c.total)}</b>. Por peso serían ${dinero(c.totalPorPeso)} (${c.total >= c.totalPorPeso ? 'pagas ' + dinero(c.total - c.totalPorPeso) + ' más' : 'pagas ' + dinero(c.totalPorPeso - c.total) + ' menos'}).`;
+  else if (nota.cobro === 'tacho' && nota.tipo !== 'seco') info.textContent = 'Agrega los pesos: cada pesada cuenta como un tacho.';
+  else info.textContent = Number(nota.precio) > 0 ? 'Se paga solo lo que pesa cada tacho.' : '';
+  if (nota.pago === 'todo') $('n-pagado').placeholder = dinero(c.total);
+  const debe = $('n-debe');
+  if (nota.pago === 'parte' && nota.pagado !== '' && c.total > 0) {
+    const pg = Number(nota.pagado), resto = r2(c.total - pg);
+    debe.classList.remove('oculto');
+    debe.style.color = pg > c.total ? 'var(--rojo)' : '';
+    debe.textContent = pg > c.total ? `Es más que el total (${dinero(c.total)}).` : resto > 0 ? `Le quedas debiendo ${dinero(resto)} al productor.` : 'Le pagaste todo.';
+  } else debe.classList.add('oculto');
+  // el botón siempre se puede tocar: si falta algo, guardarNota() dice qué es
+  const btn = $('btn-accion'); if (!$('p-nota').classList.contains('oculto')) btn.disabled = false;
+  guardar(K.borrador, nota);   // si se cierra la app a la mitad, no se pierde
+}
+
+function pintarPrecioDia(c) {
+  const box = $('n-precio-dia');
+  const dia = precioDiaLb(nota.tipo);
+  if (!dia) { box.classList.add('oculto'); return; }
+  const ref = nota.tipo === 'baba' ? ` (${dinero(dia * 50)} el tacho)` : nota.tipo === 'seco' ? ` (${dinero(dia * 100)} el quintal)` : '';
+  if (!(Number(nota.precio) > 0) || Math.abs(c.nominalLb - dia) < 0.00005) {
+    box.className = 'aviso verde'; box.textContent = `Precio del día: $${dia.toFixed(4)} por libra${ref}.`;
+  } else {
+    const dif = c.nominalLb - dia;
+    box.className = 'aviso ambar';
+    box.textContent = `Ojo: el precio del día es $${dia.toFixed(4)}/lb${ref}. Estás poniendo ${dif > 0 ? 'más' : 'menos'} ($${c.nominalLb.toFixed(4)}/lb). El dueño lo verá al aprobar.`;
+  }
+}
+
+// Baba mermada: un tacho normal pesa 48-49 lb; si pesa menos de 45 lb suele ser cacao de un día anterior que perdió agua.
+// Solo importa cuando se paga POR TACHO ENTERO: ahí un tacho liviano se paga completo.
+// Comprando por libras se paga lo que pesa, así que 20 o 38 lb no tienen nada de raro.
+function analisisMerma(n) {
+  if (n.tipo !== 'baba' || n.cobro !== 'tacho') return null;
+  const cf = config();
+  const netos = n.pesadas.map(p => r2(p.bruto - (p.tara || 0)));
+  const livianos = netos.map((v, i) => ({ v, i })).filter(x => x.v < cf.umbral);
+  if (!livianos.length) return null;
+  const muyLivianos = livianos.filter(x => x.v < cf.umbral - 5);   // probablemente incompleto o dañado, no solo mermado
+  const mermados = livianos.filter(x => x.v >= cf.umbral - 5);
+  const prom = mermados.length ? mermados.reduce((s, x) => s + x.v, 0) / mermados.length : 0;
+  const convEst = cf.conversion * Math.min(prom, cf.tachoNormal) / cf.tachoNormal;   // libras de baba por 1 lb de seco
+  return { livianos, mermados, prom, convEst, muyLivianos, cf };
+}
+function pintarMerma(c) {
+  const box = $('n-merma');
+  const m = analisisMerma(nota);
+  if (!m || !(c.precioTacho > 0)) { box.className = 'oculto'; box.innerHTML = ''; return; }
+  const plbNormal = c.nominalLb;                                   // precio por libra del día / escrito
+  const lista = m.livianos.map(x => `N° ${x.i + 1}: ${libras(x.v)} lb`).join(', ');
+  const pagas = m.livianos.length * c.precioTacho;
+  const porPeso = m.livianos.reduce((s, x) => s + x.v, 0) * plbNormal;
+  let html = `⚠️ <b>${m.livianos.length === 1 ? '1 tacho pesa' : m.livianos.length + ' tachos pesan'} menos de ${m.cf.umbral} lb</b> (${lista}).`;
+  html += `<br>Por tacho entero pagas ${dinero(pagas)} por ${m.livianos.length === 1 ? 'ese tacho' : 'esos tachos'}; por libras serían ${dinero(porPeso)} (<b>${dinero(pagas - porPeso)} más</b>).`;
+  html += `<br>Si es baba mermada de un día anterior, mejor cámbialo a <b>"Por libras (peso)"</b>.`;
+  if (m.muyLivianos.length) html += `<br>⛔ <b>${m.muyLivianos.map(x => 'N° ' + (x.i + 1)).join(', ')} muy liviano${m.muyLivianos.length > 1 ? 's' : ''}</b> (menos de ${m.cf.umbral - 5} lb): mira si el tacho viene incompleto.`;
+  box.className = 'aviso ambar';
+  box.innerHTML = html;
+}
+
+function guardarNota() {
+  const c = calcular(nota);
+  if (nota.productor.trim().length < 2) { mensaje('Escribe el nombre del productor.', true); $('n-productor').focus(); return; }
+  if (!(Number(nota.precio) > 0)) { mensaje('Escribe el precio.', true); $('n-precio').focus(); return; }
+  if (!nota.pesadas.length) { mensaje('Agrega al menos un peso.', true); $('n-peso').focus(); return; }
+  if (nota.pago === 'parte' && (nota.pagado === '' || !(Number(nota.pagado) >= 0))) { mensaje('Escribe cuánto le pagaste (puede ser 0).', true); $('n-pagado').focus(); return; }
+  const pagado = nota.pago === 'todo' ? c.total : r2(nota.pagado);
+  if (pagado > c.total) { mensaje(`Lo pagado (${dinero(pagado)}) no puede ser más que el total (${dinero(c.total)}).`, true); $('n-pagado').focus(); return; }
+  const mm = analisisMerma(nota);
+  const extra = mm ? `\n\nOjo: ${mm.livianos.length} tacho(s) con menos de ${mm.cf.umbral} lb pagado(s) como tacho entero.` : '';
+  if (!confirm(`¿Guardar la nota?\n\n${nota.productor.trim()}\n${NOMBRE_TIPO[nota.tipo]}: ${libras(c.neto)} lb\n${c.tachoEntero ? 'Por tacho entero: ' + c.tachos + ' × ' + dinero(c.precioTacho) + '\n' : ''}Total: ${dinero(c.total)}\nPagado: ${dinero(pagado)}${pagado < c.total ? '\nLe queda debiendo: ' + dinero(c.total - pagado) : ''}${extra}`)) return;
+
+  const client_uuid = nuevoId();
+  const fecha = hoyLocal();
+  const corr = nota.corrige || null;
+  let colaActual = leer(K.cola, []);
+  const viejaEnCola = corr && colaActual.some(x => x.client_uuid === corr.uuid);
+  const payload = {
+    empresa_id: null, client_uuid, comprador_id: perfil.id,
+    proveedor_nombre: nota.productor.trim(), tipo: nota.tipo,
+    precio_ingresado: c.tachoEntero ? c.precioQq : Number(nota.precio), unidad_precio: c.tachoEntero ? 'qq' : nota.unidad,
+    pesadas: nota.pesadas,
+    pagado: nota.pago === 'todo' ? null : pagado,   // "Todo": el servidor pone exactamente su total (evita diferencias de 1 centavo)
+    fecha,
+    creada_en_celular: new Date().toISOString(),
+    observacion: [corr ? (viejaEnCola ? (corr.refPrevia ? `[corrige:${corr.refPrevia}]` : '') : `[corrige:${corr.uuid}]`) : '', c.tachoEntero ? `Pagado por tacho entero: ${c.tachos} × ${dinero(c.precioTacho)}` : '', nota.obs.trim()].filter(Boolean).join('. ').replace(/\]\. /, '] ') || null
+  };
+  delete payload.empresa_id;   // la pone el servidor
+  const vista = { proveedor_nombre: payload.proveedor_nombre, tipo: nota.tipo, libras_netas: c.neto, total: c.total, pagado, fecha };
+  if (viejaEnCola) colaActual = colaActual.filter(x => x.client_uuid !== corr.uuid);   // sin enviar: se reemplaza
+  colaActual.push({ client_uuid, payload, vista, estado: 'pendiente_envio' }); guardar(K.cola, colaActual);
+
+  // recordar precio, unidad y tara para la próxima nota
+  const prefs = leer(K.prefs, {});
+  prefs.tipo = nota.tipo;
+  prefs.precios = { ...(prefs.precios || {}), [nota.tipo]: nota.precio };
+  prefs.unidades = { ...(prefs.unidades || {}), [nota.tipo]: nota.unidad };
+  prefs.cobro = nota.cobro;
+  if (nota.tipo !== 'seco') prefs.taras = { ...(prefs.taras || {}), [nota.tipo]: nota.tara };
+  prefs.productores = [...new Set([payload.proveedor_nombre, ...(prefs.productores || [])])].slice(0, 200);
+  guardar(K.prefs, prefs);
+
+  localStorage.removeItem(K.borrador);
+  ultimaGuardada = { ...vista, client_uuid, numero: null, pesadas: nota.pesadas, precio: nota.precio, unidad: nota.unidad, cobro: nota.cobro };
+  $('g-titulo').textContent = corr ? 'Nota corregida' : 'Nota guardada';
+  $('g-aviso').textContent = navigator.onLine ? 'Enviando al sistema...' : 'Sin señal: quedó guardada en el celular y se envía sola cuando haya señal.';
+  $('g-aviso').className = navigator.onLine ? 'aviso verde' : 'aviso ambar';
+  $('g-productor').textContent = payload.proveedor_nombre + ', ' + NOMBRE_TIPO[nota.tipo].toLowerCase();
+  $('g-total').textContent = dinero(c.total);
+  $('g-detalle').textContent = `${nota.pesadas.length} pesadas, ${libras(c.neto)} lb netas. Pagado: ${dinero(pagado)}.`;
+  mostrar('p-guardada');
+  nota = null;
+  sincronizar().then(() => {
+    if (!ultimaGuardada) return;
+    const sigue = leer(K.cola, []).find(x => x.client_uuid === ultimaGuardada.client_uuid);
+    if (!sigue) { $('g-aviso').textContent = 'Enviada. Queda por aprobar del dueño.' + (ultimaGuardada.numero ? ` Nota N° ${ultimaGuardada.numero}.` : ''); $('g-aviso').className = 'aviso verde'; }
+    else if (sigue.estado === 'error') { $('g-aviso').textContent = 'El sistema la rechazó: ' + sigue.error; $('g-aviso').className = 'aviso rojo'; }
+  });
+}
+
+function textoWhatsApp(n) {
+  const c = calcular({ pesadas: n.pesadas, precio: n.precio, unidad: n.unidad, cobro: n.cobro, tipo: n.tipo });
+  const lineas = n.pesadas.map((p, i) => `${i + 1}) ${libras(p.bruto)}${p.tara ? ' - ' + libras(p.tara) : ''} = ${libras(p.bruto - p.tara)} lb`);
+  return [
+    `*SM CACAO - Nota de compra${n.numero ? ' N° ' + n.numero : ''}*`,
+    `Fecha: ${fechaBonita(n.fecha)}`,
+    `Productor: ${n.proveedor_nombre}`,
+    c.tachoEntero ? `${NOMBRE_TIPO[n.tipo]}, por tacho entero: ${c.tachos} × ${dinero(c.precioTacho)}` : `${NOMBRE_TIPO[n.tipo]}, precio $${Number(n.precio).toFixed(2)} ${NOMBRE_UNIDAD[n.unidad]}`,
+    '', 'Pesadas:', ...lineas, '',
+    `Total neto: ${libras(c.neto)} lb`,
+    `*TOTAL: ${dinero(c.total)}*`,
+    `Pagado: ${dinero(n.pagado)}`,
+    `Atendió: ${perfil?.nombre || perfil?.email || ''}`,
+    '', '_Comprobante interno de control. No es un documento tributario._'
+  ].join('\n');
+}
+$('btn-whatsapp').addEventListener('click', () => {
+  if (!ultimaGuardada) return;
+  window.open('https://wa.me/?text=' + encodeURIComponent(textoWhatsApp(ultimaGuardada)), '_blank');
+});
+$('btn-otra').addEventListener('click', abrirNuevaNota);
+$('btn-ir-inicio').addEventListener('click', () => { mostrar('p-inicio'); pintarInicio(); });
+$('btn-volver').addEventListener('click', () => {
+  if (nota && nota.pesadas.length && !confirm('¿Salir de la nota? Queda guardada como borrador para seguirla después.')) return;
+  mostrar('p-inicio'); pintarInicio();
+});
+
+/* ---------- teclado abierto: se esconde el botón fijo de abajo ---------- */
+$('p-nota').addEventListener('focusin', e => { if (e.target.matches('input,textarea')) $('barra-accion').classList.add('oculto'); });
+$('p-nota').addEventListener('focusout', () => setTimeout(() => {
+  const a = document.activeElement;
+  if (!$('p-nota').classList.contains('oculto') && !(a && a.matches && a.matches('#p-nota input, #p-nota textarea'))) $('barra-accion').classList.remove('oculto');
+}, 60));
+
+/* ---------- arranque ---------- */
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+iniciar().catch(() => mostrar('p-login'));
+</script>
+</body>
+</html>
