@@ -70,6 +70,11 @@
   .plata{border:2px solid var(--arena);border-radius:var(--radio);padding:16px;margin:4px 0 16px}
   .plata .grande{font-size:2.6rem;font-weight:800;line-height:1.1}
   .plata .detalle{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--gris);font-size:.9rem}
+  .plata .gastado{margin-top:12px;border-top:1px solid var(--arena);padding-top:10px}
+  .plata .gastado .t{font-size:.8rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+  .plata .gastado .f{display:flex;justify-content:space-between;gap:8px;padding:4px 0;font-size:.95rem}
+  .plata .gastado .f.yo{font-weight:800}
+  .plata .gastado .f span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
 
   /* LA BÁSCULA: el elemento central de la app */
   .bascula{background:var(--cacao);color:#fff;border-radius:18px;padding:16px 16px 14px;margin:18px 0 12px}
@@ -176,10 +181,11 @@
     </div>
 
     <div class="plata">
-      <span class="suave">Tu plata para comprar</span>
+      <span class="suave" id="i-saldo-titulo">Plata disponible (de todos)</span>
       <div class="grande num" id="i-saldo">$0.00</div>
       <div class="detalle num"><span id="i-entregado">Te entregaron $0.00</span><span id="i-pagado">Pagaste $0.00</span></div>
       <p class="suave" id="i-saldo-nota" style="margin:8px 0 0"></p>
+      <div class="gastado oculto" id="i-gastado"></div>
     </div>
 
     <div id="i-aviso-cola" class="aviso ambar oculto"></div>
@@ -300,7 +306,7 @@
 const SUPABASE_URL = 'https://cdtzobqjdpjqgpxfxaof.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_0zCNwxEcvDiKW2gtUvZ-ig_Ky3E_M32';
 const ROLES_PERMITIDOS = ['campo', 'comprador', 'administrador', 'cajero'];
-const K = { solicitudes: 'smnotas_eliminar_v1', ocultas: 'smnotas_ocultas_v1', precios: 'smnotas_precios_v1', cola: 'smnotas_cola_v1', perfil: 'smnotas_perfil_v1', saldo: 'smnotas_saldo_v1', notas: 'smnotas_notas_v1',
+const K = { bolsa: 'smnotas_bolsa_v1', solicitudes: 'smnotas_eliminar_v1', ocultas: 'smnotas_ocultas_v1', precios: 'smnotas_precios_v1', cola: 'smnotas_cola_v1', perfil: 'smnotas_perfil_v1', saldo: 'smnotas_saldo_v1', notas: 'smnotas_notas_v1',
             borrador: 'smnotas_borrador_v1', prefs: 'smnotas_prefs_v1' };
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -462,12 +468,32 @@ function pintarInicio() {
   // lo pagado en una nota que ya corregiste no se cuenta dos veces (el dueño anula la vieja al aprobar)
   const doble = leer(K.notas, []).filter(n => n.estado === 'pendiente' && (reemplazadas.has(n.client_uuid) || eliminadas.has(n.client_uuid))).reduce((t, n) => t + Number(n.pagado || 0), 0);
   const sinEnviar = cola.filter(c => c.estado !== 'error').reduce((t, c) => t + Number(c.vista.pagado || 0), 0) - doble;
-  $('i-saldo').textContent = dinero(Number(s.saldo) - sinEnviar);
-  // Lo que te devolviste al dueño se resta: si devolviste todo, queda en $0 y solo sube cuando te vuelvan a dar plata.
-  const entregadoNeto = Math.max(0, Number(s.entregado || 0) - Number(s.devuelto || 0));
-  $('i-entregado').textContent = 'Te entregaron ' + dinero(entregadoNeto);
-  $('i-pagado').textContent = 'Pagaste ' + dinero(Number(s.pagado_notas) + sinEnviar);
-  $('i-saldo-nota').textContent = sinEnviar ? 'Ya descuenta las notas que todavía no se envían.' : '';
+  const bolsa = leer(K.bolsa, null);
+  if (bolsa && bolsa.comun) {
+    // Bolsa común: lo mismo para todos. Lo que está en tu celular sin enviar ya se descuenta.
+    const misSinEnviar = cola.filter(c => c.estado !== 'error').reduce((t, c) => t + Number(c.vista.pagado || 0), 0);
+    $('i-saldo-titulo').textContent = 'Plata disponible (de todos)';
+    $('i-saldo').textContent = dinero(Number(bolsa.saldo) - sinEnviar);
+    $('i-entregado').textContent = bolsa.entregadoHoy === null ? '' : 'Entregado hoy ' + dinero(bolsa.entregadoHoy);
+    const filas = (bolsa.gastoHoy || []).map(g => g.id === perfil.id ? { ...g, total: g.total + misSinEnviar, n: g.n + cola.filter(c => c.estado !== 'error').length } : g);
+    if (misSinEnviar && !filas.some(g => g.id === perfil.id)) filas.push({ id: perfil.id, nombre: perfil.nombre || 'Yo', total: misSinEnviar, n: cola.filter(c => c.estado !== 'error').length });
+    const totalHoy = filas.reduce((t, g) => t + g.total, 0);
+    $('i-pagado').textContent = 'Gastado hoy ' + dinero(totalHoy);
+    const box = $('i-gastado');
+    box.classList.toggle('oculto', !filas.length);
+    box.innerHTML = filas.length ? `<div class="t">Gastado hoy por cada uno</div>` + filas.map(g =>
+      `<div class="f${g.id === perfil.id ? ' yo' : ''}"><span>${esc(g.id === perfil.id ? 'Tú' : (g.nombre || '').split('@')[0])} <span class="suave">(${g.n} nota${g.n === 1 ? '' : 's'})</span></span><span>${dinero(g.total)}</span></div>`).join('') : '';
+    $('i-saldo-nota').textContent = (sinEnviar ? 'Ya descuenta tus notas que todavía no se envían. ' : '') + 'Se actualiza sola cada 30 segundos con señal.';
+  } else {
+    $('i-saldo-titulo').textContent = 'Tu plata para comprar';
+    $('i-gastado').classList.add('oculto');
+    $('i-saldo').textContent = dinero(Number(s.saldo) - sinEnviar);
+    // Lo que te devolviste al dueño se resta: si devolviste todo, queda en $0 y solo sube cuando te vuelvan a dar plata.
+    const entregadoNeto = Math.max(0, Number(s.entregado || 0) - Number(s.devuelto || 0));
+    $('i-entregado').textContent = 'Te entregaron ' + dinero(entregadoNeto);
+    $('i-pagado').textContent = 'Pagaste ' + dinero(Number(s.pagado_notas) + sinEnviar);
+    $('i-saldo-nota').textContent = sinEnviar ? 'Ya descuenta las notas que todavía no se envían.' : '';
+  }
 
   const avisoCola = $('i-aviso-cola');
   const conError = cola.filter(c => c.estado === 'error').length;
@@ -553,11 +579,37 @@ window.borrarDeCola = function (id) {
 async function refrescarDesdeServidor() {
   if (!navigator.onLine || !perfil) return;
   try {
-    const [r, n] = await Promise.all([
+    const inicioHoy = new Date(); inicioHoy.setHours(0, 0, 0, 0);
+    const [r, n, nh, mh] = await Promise.all([
       sb.rpc('resumen_campo'),
       sb.from('notas_compra').select('id,client_uuid,precio_ingresado,unidad_precio,pesadas,observacion,numero,proveedor_nombre,tipo,libras_netas,total,pagado,fecha,estado,motivo_anulacion,created_at')
-        .eq('comprador_id', perfil.id).order('created_at', { ascending: false }).limit(50)
+        .eq('comprador_id', perfil.id).order('created_at', { ascending: false }).limit(50),
+      // lo que compró cada uno hoy (para el detalle de la bolsa común)
+      sb.from('notas_compra').select('comprador_id,pagado,estado,client_uuid,observacion').gte('created_at', inicioHoy.toISOString()).neq('estado', 'anulada'),
+      sb.from('campo_movimientos').select('tipo,monto').gte('created_at', inicioHoy.toISOString())
     ]);
+    if (!r.error) {
+      // BOLSA COMÚN: la plata que entrega el dueño es una sola para todos.
+      // Saldo = todo lo entregado − lo devuelto − lo pagado en las notas de todos.
+      const filas = r.data || [];
+      const nombres = {}; filas.forEach(x => nombres[x.usuario_id] = x.nombre);
+      const porPersona = {};
+      if (!nh.error) {
+        const reemp = new Set((nh.data || []).map(x => ((x.observacion || '').match(/\[corrige:([0-9a-f-]{36})\]/i) || [])[1]).filter(Boolean));
+        (nh.data || []).filter(x => !reemp.has(x.client_uuid)).forEach(x => {
+          const k = x.comprador_id; porPersona[k] = porPersona[k] || { total: 0, n: 0 };
+          porPersona[k].total += Number(x.pagado || 0); porPersona[k].n++;
+        });
+      }
+      const entregadoHoy = mh.error ? null : (mh.data || []).reduce((t, x) => t + (x.tipo === 'entrega' ? 1 : -1) * Number(x.monto || 0), 0);
+      guardar(K.bolsa, {
+        comun: filas.length > 1 || ['cajero', 'administrador'].includes(perfil.rol),
+        saldo: filas.reduce((t, x) => t + Number(x.saldo || 0), 0),
+        entregadoHoy,
+        gastoHoy: Object.entries(porPersona).map(([id, v]) => ({ id, nombre: nombres[id] || 'Otro', total: Math.round(v.total * 100) / 100, n: v.n })).sort((a, b) => b.total - a.total),
+        en: new Date().toISOString()
+      });
+    }
     if (!r.error) {
       const mio = (r.data || []).find(x => x.usuario_id === perfil.id) || { entregado: 0, devuelto: 0, pagado_notas: 0, saldo: 0 };
       guardar(K.saldo, mio);

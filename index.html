@@ -861,7 +861,7 @@ async function manejarSubmitLoginGate(event){
     <aside id="sidebarDesk" class="sb no-print" aria-label="Menú principal">
       <div class="sb-head">
         <div class="sb-logo"><img data-logo="1" alt="SM CACAO"></div>
-        <div class="sb-brand"><b>SM CACAO</b><span>Compra · Venta · v58</span></div>
+        <div class="sb-brand"><b>SM CACAO</b><span>Compra · Venta · v59</span></div>
       </div>
 
       <nav class="sb-scroll">
@@ -1864,10 +1864,10 @@ async function manejarSubmitLoginGate(event){
 
             <div class="bg-white rounded-lg shadow p-4 mb-4">
                 <div class="flex justify-between items-center mb-2 gap-2 flex-wrap">
-                    <h2 class="font-bold text-cacao-dark">💵 Plata de cada trabajador</h2>
+                    <h2 class="font-bold text-cacao-dark">💵 Bolsa común de los trabajadores</h2>
                     <button onclick="cargarNotasCampo()" class="text-xs font-bold border border-cacao-dark text-cacao-dark rounded px-3 py-1">🔄 Actualizar</button>
                 </div>
-                <p class="text-xs text-gray-500 mb-3">La plata que le das sigue siendo de tu caja: aquí solo se anota cuánto lleva él. Lo que paga a los productores se descuenta de su saldo, y al aprobar la nota la compra sale de la caja y aparece en Compras.</p>
+                <p class="text-xs text-gray-500 mb-3">Entregas una sola vez y <b>todos los trabajadores ven el mismo saldo</b> en SM Notas. Cada compra de cualquiera lo baja. Sigue siendo plata de tu caja: al aprobar las notas, la compra sale de la caja y aparece en Compras.</p>
                 <div id="nc_saldos"><p class="text-sm text-gray-400">Cargando...</p></div>
             </div>
 
@@ -2041,40 +2041,56 @@ async function manejarSubmitLoginGate(event){
             pintarBadge((p.data||[]).length);
           };
 
-          function pintarSaldos(lista){
-            if(!lista.length){
-              $('nc_saldos').innerHTML = '<p class="text-sm text-gray-500">Todavía no hay trabajadores de campo. Cuando uno cree su cuenta en SM Notas, actívalo en <b>👥 Usuarios</b> con el rol <b>Trabajador de campo</b>.</p>';
-              return;
-            }
-            $('nc_saldos').innerHTML = lista.map(t=>{
-              const saldo = Number(t.saldo||0);
-              const color = saldo < 0 ? '#B91C1C' : '#166534';
-              return `<div class="nc-card" style="margin-bottom:10px">
-                <div class="nc-row"><div><b>${esc(t.nombre)}</b>${t.activo===false?' <span class="nc-pill" style="background:#FEE2E2;color:#991B1B">Inactivo</span>':''}</div>
-                  <div class="nc-num" style="font-size:22px;font-weight:800;color:${color}">${m(saldo)}</div></div>
-                <div class="text-xs text-gray-500 nc-num" style="margin-top:2px">${Math.abs(saldo)<0.005 && Number(t.entregado||0) - Number(t.devuelto||0) < 0.005 ? 'Sin plata pendiente: todo cuadrado.' : `Le diste ${m(Math.max(0, Number(t.entregado||0) - Number(t.devuelto||0)))} · Pagó en notas ${m(t.pagado_notas)}`}${t.notas_pendientes>0?` · <b style="color:#7A4B00">${t.notas_pendientes} por aprobar</b>`:''}</div>
-                ${t.ciclo_desde ? `<div class="text-xs text-gray-400">Cuenta nueva desde que quedó en cero el ${new Date(t.ciclo_desde).toLocaleString('es-EC',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>` : ''}
-                ${saldo<0?'<div class="text-xs" style="color:#B91C1C;margin-top:4px">Pagó más de lo que le diste: revisa sus notas o entrégale la diferencia.</div>':''}
+          // BOLSA COMÚN: una sola plata para todos los trabajadores. Las entregas y devoluciones se anotan a
+          // nombre del administrador (la "bolsa"); el saldo es la suma de todos (entregado − devuelto − pagado en notas).
+          async function pintarSaldos(lista){
+            const bolsaId = dbUsuario?.id;
+            const saldo = Math.round(lista.reduce((t,x)=>t+Number(x.saldo||0),0)*100)/100;
+            const pendientes = lista.reduce((t,x)=>t+Number(x.notas_pendientes||0),0);
+            nombres[bolsaId] = 'la bolsa común'; saldos[bolsaId] = saldo;
+            const inicioHoy = new Date(); inicioHoy.setHours(0,0,0,0);
+            let hoy = [], movs = [];
+            try{
+              const [a,b] = await Promise.all([
+                supabaseClient.from('notas_compra').select('comprador_id,pagado,client_uuid,observacion').eq('empresa_id',perfilUsuario.empresa_id).gte('created_at',inicioHoy.toISOString()).neq('estado','anulada'),
+                supabaseClient.from('campo_movimientos').select('tipo,monto').eq('empresa_id',perfilUsuario.empresa_id).gte('created_at',inicioHoy.toISOString())
+              ]);
+              hoy = a.data||[]; movs = b.data||[];
+            }catch(e){}
+            const reemp = new Set(hoy.map(x=>((x.observacion||'').match(/\[corrige:([0-9a-f-]{36})\]/i)||[])[1]).filter(Boolean));
+            const por = {};
+            hoy.filter(x=>!reemp.has(x.client_uuid)).forEach(x=>{ por[x.comprador_id] = por[x.comprador_id] || {t:0,n:0}; por[x.comprador_id].t += Number(x.pagado||0); por[x.comprador_id].n++; });
+            const entregadoHoy = movs.reduce((t,x)=>t+(x.tipo==='entrega'?1:-1)*Number(x.monto||0),0);
+            const gastadoHoy = Object.values(por).reduce((t,v)=>t+v.t,0);
+            const color = saldo < 0 ? '#B91C1C' : '#166534';
+            $('nc_saldos').innerHTML = `<div class="nc-card">
+                <div class="nc-row"><div class="text-sm text-gray-500">Plata disponible (la ven todos)</div>
+                  <div class="nc-num" style="font-size:30px;font-weight:800;color:${color}">${m(saldo)}</div></div>
+                <div class="text-xs text-gray-500 nc-num">Entregado hoy ${m(entregadoHoy)} · Gastado hoy ${m(gastadoHoy)}${pendientes?` · <b style="color:#7A4B00">${pendientes} nota${pendientes>1?'s':''} por aprobar</b>`:''}</div>
+                ${saldo<0?'<div class="text-xs" style="color:#B91C1C;margin-top:4px">Pagaron más de lo que entregaste: revisa las notas o entrega la diferencia.</div>':''}
+                ${Object.keys(por).length ? `<div style="margin-top:10px;border-top:1px solid #EFE6D8;padding-top:8px">
+                  <div class="text-xs font-bold text-gray-500" style="text-transform:uppercase;letter-spacing:.04em">Gastado hoy por cada uno</div>
+                  ${Object.entries(por).sort((a,b)=>b[1].t-a[1].t).map(([id,v])=>`<div class="nc-row text-sm" style="padding:3px 0"><span>${esc((nombres[id]&&id!==bolsaId?nombres[id]:(id===bolsaId?'Tú':'Otro')).split('@')[0])} <span class="text-gray-400">(${v.n} nota${v.n===1?'':'s'})</span></span><span class="nc-num">${m(v.t)}</span></div>`).join('')}
+                </div>` : ''}
                 <div class="flex gap-2 mt-3 flex-wrap">
-                  <button class="nc-btn" style="background:#1B5E20;color:#fff" onclick="ncAbrirForm('${t.usuario_id}','entrega')">💵 Entregar plata</button>
-                  <button class="nc-btn" style="background:#fff;border:1px solid #2B1A12;color:#2B1A12" onclick="ncAbrirForm('${t.usuario_id}','devolucion')">↩️ Me devolvió</button>
+                  <button class="nc-btn" style="background:#1B5E20;color:#fff" onclick="ncAbrirForm('${bolsaId}','entrega')">💵 Entregar plata</button>
+                  <button class="nc-btn" style="background:#fff;border:1px solid #2B1A12;color:#2B1A12" onclick="ncAbrirForm('${bolsaId}','devolucion')">↩️ Me devolvieron</button>
                 </div>
-                <div id="ncf_${t.usuario_id}" style="display:none;margin-top:10px"></div>
+                <div id="ncf_${bolsaId}" style="display:none;margin-top:10px"></div>
               </div>`;
-            }).join('');
           }
 
           window.ncAbrirForm = function(uid, tipo){
             document.querySelectorAll('[id^="ncf_"]').forEach(d=>{ if(d.id!=='ncf_'+uid){ d.style.display='none'; d.innerHTML=''; } });
             const box = $('ncf_'+uid);
-            const titulo = tipo==='entrega' ? `¿Cuánto le entregas a ${esc(nombres[uid]||'')}?` : `¿Cuánto te devolvió ${esc(nombres[uid]||'')}?`;
+            const titulo = tipo==='entrega' ? `¿Cuánto entregas a ${esc(nombres[uid]||'')}?` : `¿Cuánto te devolvieron de ${esc(nombres[uid]||'')}?`;
             box.innerHTML = `<div style="background:#F8F4EC;border-radius:10px;padding:10px">
               <div class="text-sm font-bold mb-2">${titulo}</div>
               <div class="flex gap-2 flex-wrap">
                 <input id="ncm_${uid}" type="number" inputmode="decimal" step="0.01" min="0" placeholder="Monto $" class="border rounded p-2" style="width:130px;font-size:16px">
                 <input id="ncn_${uid}" placeholder="Nota (opcional)" class="border rounded p-2 flex-1" style="min-width:140px;font-size:16px">
               </div>
-              ${tipo==='devolucion' && saldos[uid]>0 ? `<button class="nc-btn mt-2" style="background:#fff;border:1px solid #1B5E20;color:#1B5E20" onclick="document.getElementById('ncm_${uid}').value='${saldos[uid].toFixed(2)}'">Me devolvió todo (${m(saldos[uid])})</button>` : ''}
+              ${tipo==='devolucion' && saldos[uid]>0 ? `<button class="nc-btn mt-2" style="background:#fff;border:1px solid #1B5E20;color:#1B5E20" onclick="document.getElementById('ncm_${uid}').value='${saldos[uid].toFixed(2)}'">Me devolvieron todo (${m(saldos[uid])})</button>` : ''}
               <div class="flex gap-2 mt-2">
                 <button class="nc-btn" style="background:#2B1A12;color:#fff" onclick="ncGuardarMov('${uid}','${tipo}',this)">Guardar</button>
                 <button class="nc-btn" style="background:#fff;border:1px solid #ccc" onclick="ncAbrirForm('${uid}','cerrar')">Cancelar</button>

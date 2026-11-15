@@ -2,7 +2,7 @@
    - La página se pide primero a internet (para recibir actualizaciones) y, si no hay señal, se usa la guardada.
    - Los archivos de la app (librería, íconos) se sirven desde el celular.
    - Las consultas a la base de datos (Supabase) NUNCA se guardan: siempre van por internet. */
-const CACHE = 'smnotas-v10';
+const CACHE = 'smnotas-v11';
 const ARCHIVOS = ['./', './index.html', './manifest.json', './supabase.js', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon-32.png'];
 
 self.addEventListener('install', e => {
